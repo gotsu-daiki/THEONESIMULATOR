@@ -161,7 +161,7 @@ public class Coord implements Cloneable, Comparable<Coord> {
 	}
 	
 	/**
-	 * 座標a,bが一致しているかを返すメソッド
+	 * 座標a,bが整数部分が一致しているかを返すメソッド
 	 * @param a
 	 * @param b
 	 * @return aとｂのX,Y座標の整数部分を比較し、等しければtrue,そうでなければfalse
@@ -175,6 +175,13 @@ public class Coord implements Cloneable, Comparable<Coord> {
 	}
 		return false;
 }
+
+	/**
+	 * 座標a,bが一致しているかを返すメソッド
+	 * @param a
+	 * @param b
+	 * @return aとｂのX,Y座標を比較し、等しければtrue,そうでなければfalse
+	 */
 public static boolean CompareEqual(Coord a,Coord b) {
 		
 		if(a.getX()==b.getX()) {
