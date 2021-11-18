@@ -529,86 +529,7 @@ public class DTNHost implements Comparable<DTNHost> {
 		//}
 
 
-	/*public void JustPointMove(double timeIncrement,DTNHost host) {
-		double possibleMovement;
-		double distance;
-		double dx, dy;
 
-
-
-		if (!isMovementActive() || SimClock.getTime() < this.nextTimeToMove) {
-			return;
-		}
-		/*if (this.destination == null) {
-			if (!setNextWaypoint()) {
-				return;
-			}
-		}
-
-		possibleMovement = timeIncrement * speed;
-		distance = host.location.distance(host.Beforedestination);
-
-
-		while (possibleMovement >= distance) {
-			 host.location.setLocation(host.Beforedestination); // snap to destination
-			 possibleMovement -= distance;
-			 if (!setNextWaypoint()) { // get a new waypoint
-			   return; // no more waypoints left
-			 }
-			distance = host.location.distance(host.Beforedestination);
-		}
-
-		// move towards the point for possibleMovement amount
-		dx = (possibleMovement/distance) * (host.Beforedestination.getX() -
-				host.location.getX());
-		dy = (possibleMovement/distance) * (host.Beforedestination.getY() -
-				host.location.getY());
-		host.location.translate(dx, dy);
-
-		host.NecessaryOfBack=true;
-	    }*/
-
-
-	/*public void BackMove(double timeIncrement,DTNHost host) {
-		double possibleMovement;
-		double distance;
-		double dx, dy;
-
-
-
-		if (!isMovementActive() || SimClock.getTime() < this.nextTimeToMove) {
-			return;
-		}
-		if (this.destination == null) {
-			if (!setNextWaypoint()) {
-				return;
-			}
-		}
-
-		possibleMovement = timeIncrement * speed;
-		distance = host.location.distance(host.Beforedestination);
-
-
-		while (possibleMovement >= distance) {
-			 host.location.setLocation(host.Beforedestination); // snap to destination
-			 possibleMovement -= distance;
-			 if (!setNextWaypoint()) { // get a new waypoint
-			   return; // no more waypoints left
-			 }
-			distance = host.location.distance(host.Beforedestination);
-		}
-
-		// move towards the point for possibleMovement amount
-		dx = (possibleMovement/distance) * (host.Beforedestination.getX() -
-				host.location.getX());
-		dy = (possibleMovement/distance) * (host.Beforedestination.getY() -
-				host.location.getY());
-		host.location.translate(dx, dy);
-
-		if(host.location==host.Beforedestination) {
-
-		}
-	    }*/
 	}
 
 
@@ -685,7 +606,7 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
-		
+
 
 		if (this.movListeners != null) {
 			for (MovementListener l : this.movListeners) {
