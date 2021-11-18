@@ -142,6 +142,17 @@ public class ShortestPathMapBasedMovement extends MapBasedMovement implements
 	}
 
 
+	//災害地を避けたパスを返す
+	@Override
+	public List<MapNode> getAnotherPathNodeList(MapNode BranchNode) {
+			MapNode to = pois.selectDestination();
+
+			List<MapNode> nodePath = pathFinder.getShortestPath(BranchNode,to,host);
+
+			return nodePath;
+	}
+
+
 	//宛先ノードを返す
 	public MapNode getlastNode() {
 			MapNode to = pois.selectDestination();
