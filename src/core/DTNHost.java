@@ -647,6 +647,7 @@ public class DTNHost implements Comparable<DTNHost> {
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
 
 				 this.PathCount++;
+				 System.out.println(this.PathNodeList.get(PathCount)+""+this.PathCount);
 			     }
 		}
 
@@ -678,12 +679,13 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		path = movement.getPathAnotherRout(BranchNode);
 		this.PathNodeList=movement.getAnotherPathNodeList(BranchNode);
-		this.PathCount=0;
+		System.out.println(movement.getAnotherPathNodeList(BranchNode).size());
+		this.PathCount=-1;
 
 
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
-		//System.out.println("目的地"+this.destination);
+		
 
 		if (this.movListeners != null) {
 			for (MovementListener l : this.movListeners) {
