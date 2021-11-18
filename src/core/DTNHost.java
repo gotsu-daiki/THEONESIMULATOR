@@ -627,12 +627,6 @@ public class DTNHost implements Comparable<DTNHost> {
 			this.PathNodeList=movement.getPathNodeList();
 		}
 
-		/*if(this.ReachBeforeBranch==true) {
-			path = movement.getPath();
-			this.PathNodeList=movement.getPathNodeList();
-		}*/
-
-
 
 
 		//System.out.println("パス"+path);
@@ -641,21 +635,23 @@ public class DTNHost implements Comparable<DTNHost> {
 			this.path = null;
 			return false;
 		}
+
+
 		//最後に通った目的地（分岐点）を保持する
 		if(this.destination!=null) {
 
 			//１つ前の目的分岐点に到着したら、最後に通った分岐点を更新する
-			if(this.location.getX()==this.destination.getX()) {
-			if(this.location.getY()==this.destination.getY()) {
-
-				    this.Beforedestination=this.destination;
+			if(Coord.CompareEqual(this.location,this.destination)) {
+			     this.Beforedestination=this.destination;
 				   // if(this.address==0)
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
 
-				    this.PathCount++;
-				}
+				 this.PathCount++;
+			     }
 		}
-		}
+
+
+
 
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
