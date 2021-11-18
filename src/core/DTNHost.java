@@ -57,10 +57,10 @@ public class DTNHost implements Comparable<DTNHost> {
 	private List<MovementListener> movListeners;
 	private List<NetworkInterface> net;
 	private ModuleCommunicationBus comBus;
-	
-	
-	
-	
+
+
+
+
 
 
 	static {
@@ -93,7 +93,7 @@ public class DTNHost implements Comparable<DTNHost> {
 			ni.setHost(this);
 			net.add(ni);
 		}
-		
+
 
 		// TODO - think about the names of the interfaces and the nodes
 		//this.name = groupId + ((NetworkInterface)net.get(1)).getAddress();
@@ -153,9 +153,9 @@ public class DTNHost implements Comparable<DTNHost> {
 		/* TODO: make this work for multiple interfaces */
 		return this.getInterface(1).isActive();
 		//return false;
-		
+
 	}
-	
+
 
 	/**
 	 * Set a router for this host
@@ -235,7 +235,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public Path getPath() {
 		return this.path;
 	}
-	
+
 
 
 	/**
@@ -245,8 +245,8 @@ public class DTNHost implements Comparable<DTNHost> {
 	public void setLocation(Coord location) {
 		this.location = location.clone();
 	}
-	
-	
+
+
 
 	/**
 	 * Sets the Node's name overriding the default name (groupId + netAddress)
@@ -368,7 +368,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @param simulateConnections Should network layer be updated too
 	 */
 	public void update(boolean simulateConnections,DTNHost host) {
-		
+
 		//System.out.println(this.destination);
 		if (!isRadioActive()) {
 			// Make sure inactive nodes don't have connections
@@ -381,7 +381,7 @@ public class DTNHost implements Comparable<DTNHost> {
 				i.update();
 			}
 		}
-		
+
 		this.router.update();
 	}
 
@@ -423,12 +423,12 @@ public class DTNHost implements Comparable<DTNHost> {
 		if (!isMovementActive() || SimClock.getTime() < this.nextTimeToMove) {
 			return;
 		}
-		
-		
-		
-		
-		
-				
+
+
+
+
+
+
 		//①災害地に到着したなら戻る必要がある
 		if(host.DisasterPoint!=null) {
 			    if(Coord.CompareIntEqual(host.location,host.DisasterPoint )) {
@@ -442,16 +442,16 @@ public class DTNHost implements Comparable<DTNHost> {
 			    		}
 			    	}
 			    }
-		
+
 		/*前のマップノードに戻る経路設定
 		if(this.destination == null&&host.NecessaryOfBack!=null) {
 				if(!setNextWayBranchpoint(host.BeforeBranchNode)){
 					return;
 				  }
 				}*/
-		
-		
-		
+
+
+
 		//前マップノードに到着した被災者は動けなくなる
 			if(host.BeforeBranchNode!=null) {
 					if(Coord.CompareIntEqual(host.location,host.BeforeBranchNode.location)) {
@@ -461,16 +461,16 @@ public class DTNHost implements Comparable<DTNHost> {
 					host.ReachBeforeBranch=true;
 					//今通ったパスを行けなくして、新しいダイクストラ発動（実装したい）
 				}
-			}	
-			
-			//戻ってきたブランチノードから別のルートを探索
+			}
+
+			//戻ってきた前マップノードから別のルートを探索
 			if(this.destination == null&&host.ReachBeforeBranch==true) {
 				if (!setAnotherNextWaypoint(host.BeforeBranchNode)) {
 					return;
 				}
 			}
-			
-				
+
+
        //目的地に向けてホストを少しずつ動かす
 		if(host.destination!=null) {
 			possibleMovement = timeIncrement * speed;
@@ -492,28 +492,28 @@ public class DTNHost implements Comparable<DTNHost> {
 			dy = (possibleMovement/distance) * (host.destination.getY() -
 					host.location.getY());
 			host.location.translate(dx, dy);
-			
+
 		}
-		
-		
+
+
 		//被災地点に到着していない被災者は最終目的地点を目指す
 				else if(this.destination == null) {
 					if (!setNextWaypoint()) {
 						return;
 					}
-					
+
 				}
-			
-		
-			
+
+
+
 		//最終目的地点についた被災者はムーブメント＆通信ができなくなる
 			if(host.LastMapNode!=null) {
 				if(Coord.CompareIntEqual(host.location,host.LastMapNode)) {
 					 host.MoveActive=false;
 				}
 			}
-	       
-			
+
+
 
 			/*②災害地リストの中に現在地が入っていれば戻る必要がある
 			if(host.DisasterPoint2!=null) {
@@ -523,19 +523,19 @@ public class DTNHost implements Comparable<DTNHost> {
 	  			 host.BeforeBranchNode=host.PathNodeList.get(PathCount);
 			   }
 			}
-			}*/	
+			}*/
 
-			
+
 		//}
-		
+
 
 	/*public void JustPointMove(double timeIncrement,DTNHost host) {
 		double possibleMovement;
 		double distance;
 		double dx, dy;
 
-		
-		
+
+
 		if (!isMovementActive() || SimClock.getTime() < this.nextTimeToMove) {
 			return;
 		}
@@ -548,7 +548,7 @@ public class DTNHost implements Comparable<DTNHost> {
 		possibleMovement = timeIncrement * speed;
 		distance = host.location.distance(host.Beforedestination);
 
-		
+
 		while (possibleMovement >= distance) {
 			 host.location.setLocation(host.Beforedestination); // snap to destination
 			 possibleMovement -= distance;
@@ -564,18 +564,18 @@ public class DTNHost implements Comparable<DTNHost> {
 		dy = (possibleMovement/distance) * (host.Beforedestination.getY() -
 				host.location.getY());
 		host.location.translate(dx, dy);
-		
+
 		host.NecessaryOfBack=true;
 	    }*/
-	
-	
+
+
 	/*public void BackMove(double timeIncrement,DTNHost host) {
 		double possibleMovement;
 		double distance;
 		double dx, dy;
 
-		
-		
+
+
 		if (!isMovementActive() || SimClock.getTime() < this.nextTimeToMove) {
 			return;
 		}
@@ -588,7 +588,7 @@ public class DTNHost implements Comparable<DTNHost> {
 		possibleMovement = timeIncrement * speed;
 		distance = host.location.distance(host.Beforedestination);
 
-		
+
 		while (possibleMovement >= distance) {
 			 host.location.setLocation(host.Beforedestination); // snap to destination
 			 possibleMovement -= distance;
@@ -604,16 +604,16 @@ public class DTNHost implements Comparable<DTNHost> {
 		dy = (possibleMovement/distance) * (host.Beforedestination.getY() -
 				host.location.getY());
 		host.location.translate(dx, dy);
-		
+
 		if(host.location==host.Beforedestination) {
-			
+
 		}
 	    }*/
-	}		
-		
-		
+	}
 
-	
+
+
+
 	/**
 	 * Sets the next destination and speed to correspond the next waypoint
 	 * on the path.
@@ -621,20 +621,20 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * should wait
 	 */
 	private boolean setNextWaypoint() {
-	
+
 		if (path == null) {
 			path = movement.getPath();
 			this.PathNodeList=movement.getPathNodeList();
 		}
-		
+
 		/*if(this.ReachBeforeBranch==true) {
 			path = movement.getPath();
 			this.PathNodeList=movement.getPathNodeList();
 		}*/
-		
 
 
-		
+
+
 		//System.out.println("パス"+path);
 		if (path == null || !path.hasNext()) {
 			this.nextTimeToMove = movement.nextPathAvailable();
@@ -643,15 +643,15 @@ public class DTNHost implements Comparable<DTNHost> {
 		}
 		//最後に通った目的地（分岐点）を保持する
 		if(this.destination!=null) {
-			
+
 			//１つ前の目的分岐点に到着したら、最後に通った分岐点を更新する
 			if(this.location.getX()==this.destination.getX()) {
-			if(this.location.getY()==this.destination.getY()) { 
-				
+			if(this.location.getY()==this.destination.getY()) {
+
 				    this.Beforedestination=this.destination;
 				   // if(this.address==0)
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
-				    
+
 				    this.PathCount++;
 				}
 		}
@@ -660,11 +660,11 @@ public class DTNHost implements Comparable<DTNHost> {
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
 		//System.out.println("目的地"+this.destination);
-		
-		
-		
-		
-		
+
+
+
+
+
 
 		if (this.movListeners != null) {
 			for (MovementListener l : this.movListeners) {
@@ -674,17 +674,17 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		return true;
 	}
-	
-	
+
+
 	private boolean setNextWayBranchpoint(MapNode BranchNode) {
-		
+
 	   path = movement.getPathBranchPoint(BranchNode);
-			
-			
+
+
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
 		//System.out.println("目的地"+this.destination);
-		
+
 		if (this.movListeners != null) {
 			for (MovementListener l : this.movListeners) {
 				l.newDestination(this, this.destination, this.speed);
@@ -696,14 +696,14 @@ public class DTNHost implements Comparable<DTNHost> {
 			this.path = null;
 			return false;
 		}*/
-			
+
 		/*最後に通った目的地（分岐点）を保持する
 		if(this.destination!=null) {
-			
+
 			//１つ前の目的分岐点に到着したら、最後に通った分岐点を更新する
 			if(this.location.getX()==this.destination.getX()) {
-					if(this.location.getY()==this.destination.getY()) { 
-				
+					if(this.location.getY()==this.destination.getY()) {
+
 				    this.Beforedestination=this.destination;
 				   // if(this.address==0)
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
@@ -711,20 +711,20 @@ public class DTNHost implements Comparable<DTNHost> {
 			}
 		}*/
 
-		
+
 
 		return true;
 	}
-	
+
 	private boolean setAnotherNextWaypoint(MapNode BranchNode){
-		
+
 		path = movement.getPathAnotherRout(BranchNode);
-		
-		
+
+
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
 		//System.out.println("目的地"+this.destination);
-		
+
 		if (this.movListeners != null) {
 			for (MovementListener l : this.movListeners) {
 				l.newDestination(this, this.destination, this.speed);
