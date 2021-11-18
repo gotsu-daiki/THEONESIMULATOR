@@ -452,7 +452,7 @@ public class DTNHost implements Comparable<DTNHost> {
 
 
 
-		//前マップノードに到着した被災者は動けなくなる
+		//前マップノードに到着した被災者は次動くときは災害地を避けたパスを選択しすすむ
 			if(host.BeforeBranchNode!=null) {
 					if(Coord.CompareIntEqual(host.location,host.BeforeBranchNode.location)) {
 					host.NecessaryOfBack=null; //前のマップノードに戻ると
