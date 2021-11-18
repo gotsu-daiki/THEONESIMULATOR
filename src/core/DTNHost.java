@@ -719,6 +719,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	private boolean setAnotherNextWaypoint(MapNode BranchNode){
 
 		path = movement.getPathAnotherRout(BranchNode);
+		this.PathNodeList=movement.getAnotherPathNodeList(BranchNode);
 
 
 		this.destination = path.getNextWaypoint();
