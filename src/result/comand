@@ -1,0 +1,7 @@
+reset
+set key left top
+set xlabel "シミュレーション時間[s]"
+set ylabel "情報共有率[%]"
+plot "firstcontact-share.txt" with linespoints pointtype 7,\
+     "wave-share.txt" with linespoints pointtype 7,\
+     "MaxProp-share.txt" with linespoints pointtype 7

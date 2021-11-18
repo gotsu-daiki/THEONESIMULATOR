@@ -1,0 +1,11 @@
+reset
+set title "プロトコル別データ到着率" font "Arial,20"
+set mytics
+set grid ytics linestyle 8
+set boxwidth 0.5 relative
+set yrange [0:2]
+set xlabel "プロトコル" font "Arial,12"
+set xtics font "Arial,12"
+set ylabel "データ到着率[%]" font "Arial,12"
+plot "slowput" using 0:2:xtic(1)  with boxes notitle fill pattern 3,\
+"slowput" using 0:($2+.1):(sprintf("%3.2f",$2)) with labels notitle font "Arial,14"
