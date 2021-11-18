@@ -678,6 +678,7 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		path = movement.getPathAnotherRout(BranchNode);
 		this.PathNodeList=movement.getAnotherPathNodeList(BranchNode);
+		this.PathCount=0;
 
 
 		this.destination = path.getNextWaypoint();
@@ -691,6 +692,9 @@ public class DTNHost implements Comparable<DTNHost> {
 		}
 		return true;
 	}
+
+
+
 
 	/**
 	 * Sends a message from this host to another host
