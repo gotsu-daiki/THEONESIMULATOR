@@ -435,25 +435,26 @@ public class DTNHost implements Comparable<DTNHost> {
 			    		if(host.Beforedestination!=null) {
 			    			DataManager.Manager2(host);//災害地に訪れたノードを記録
 			    		    host.NecessaryOfBack=host.Beforedestination;
-			    		    host.destination=null;
+			    		    //host.destination=null;
+			    		    host.destination=host.PathNodeList.get(PathCount).getLocation();
 			    			 host.BeforeBranchNode=host.PathNodeList.get(PathCount);
 			    			 host.AvoidanceNode=host.PathNodeList.get(PathCount+1);
 			    		}
 			    	}
 			    }
 		
-		//前のマップノードに戻る経路設定
+		/*前のマップノードに戻る経路設定
 		if(this.destination == null&&host.NecessaryOfBack!=null) {
 				if(!setNextWayBranchpoint(host.BeforeBranchNode)){
 					return;
 				  }
-				}
+				}*/
 		
 		
 		
 		//前マップノードに到着した被災者は動けなくなる
 			if(host.BeforeBranchNode!=null) {
-					if(Coord.CompareEqual(host.location,host.BeforeBranchNode.location)) {
+					if(Coord.CompareIntEqual(host.location,host.BeforeBranchNode.location)) {
 					host.NecessaryOfBack=null; //前のマップノードに戻ると
 					host.destination=null;//目的地初期化
 				    //前のマップノードに戻ったら新しいルート設定
