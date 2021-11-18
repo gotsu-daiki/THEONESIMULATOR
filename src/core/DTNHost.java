@@ -417,9 +417,9 @@ public class DTNHost implements Comparable<DTNHost> {
 		double distance;
 		double dx, dy;
         if(host.address==0) {
-        	int i=1;
+        //System.out.println(host.PathNodeList);
         }
-		//System.out.println(host.destination);
+
 		if (!isMovementActive() || SimClock.getTime() < this.nextTimeToMove) {
 			return;
 		}
@@ -676,45 +676,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	}
 
 
-	private boolean setNextWayBranchpoint(MapNode BranchNode) {
 
-	   path = movement.getPathBranchPoint(BranchNode);
-
-
-		this.destination = path.getNextWaypoint();
-		this.speed = path.getSpeed();
-		//System.out.println("目的地"+this.destination);
-
-		if (this.movListeners != null) {
-			for (MovementListener l : this.movListeners) {
-				l.newDestination(this, this.destination, this.speed);
-			}
-		}
-		//System.out.println("パス"+path);
-		/*if (path == null || !path.hasNext()) {
-			this.nextTimeToMove = movement.nextPathAvailable();
-			this.path = null;
-			return false;
-		}*/
-
-		/*最後に通った目的地（分岐点）を保持する
-		if(this.destination!=null) {
-
-			//１つ前の目的分岐点に到着したら、最後に通った分岐点を更新する
-			if(this.location.getX()==this.destination.getX()) {
-					if(this.location.getY()==this.destination.getY()) {
-
-				    this.Beforedestination=this.destination;
-				   // if(this.address==0)
-				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
-					}
-			}
-		}*/
-
-
-
-		return true;
-	}
 
 	private boolean setAnotherNextWaypoint(MapNode BranchNode){
 
