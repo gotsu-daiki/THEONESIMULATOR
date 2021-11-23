@@ -36,7 +36,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public Coord location; 	// ホストの現在地
 	public Coord destination;	// 現在目指しているマップノードの座標（中継地点）
 	public Coord LastMapNode;  //ホストの最終目的地点（パスの最後の座標）
-	public Coord Beforedestination;//最後に通った分岐点
+	//public Coord Beforedestination;//最後に通った分岐点
  	public List<Coord> DisasterPoint2=new ArrayList<Coord>() {{add(LastMapNode);}};//ホストが持っている被災地の位置情報
 	public Coord DisasterPoint;
 	public Coord NecessaryOfBack=null; //前の分岐点に戻る必要があるかどうか
@@ -46,7 +46,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public int PathCount=-1; //被災者がパスの何番目のマップノードまで進んだか確認する
 	public boolean ReachBeforeBranch=false;
 	public boolean MoveActive=true;
-	public MapNode BeforeBranchNode;
+	public MapNode BeforeMapNode;
 	private MessageRouter router;
 	private MovementModel movement;
 	private Path path;
@@ -555,16 +555,16 @@ public class DTNHost implements Comparable<DTNHost> {
 		}
 
 
-		//最後に通った目的地（分岐点）を保持する
+		//最後に通ったマップノードを保持する
 		if(this.destination!=null) {
 
-			//１つ前の目的分岐点に到着したら、最後に通った分岐点を更新する
+			//新しいマップノードに到着したら、最後に通ったマップノードを更新する
 			if(Coord.CompareEqual(this.location,this.destination)) {
-			     this.Beforedestination=this.destination;
-				   // if(this.address==0)
+			     this.PathCount++;
+			     this.BeforeMapNode=this.PathNodeList.get(PathCount);
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
 
-				 this.PathCount++;
+				 
 				 System.out.println(this+"のパスノードリスト"+this.PathNodeList.get(PathCount)+""+this.PathCount);
 			     }
 		}
