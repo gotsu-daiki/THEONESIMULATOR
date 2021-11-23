@@ -225,7 +225,7 @@ public class DisasterPointMassage extends Application {
 public void DataSend(DTNHost host) {
 
   //ソースホストを被災地ノードに限定する
-		if(host.address>=1){
+		if(host.address>=100){
 				Message m = new Message(host,randomHost(),"disaster"+host.address,getPingSize());
 				m.addProperty("DisasterCoord", host.location);;
 				m.setAppID(APP_ID);

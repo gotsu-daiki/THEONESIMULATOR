@@ -437,25 +437,21 @@ public class DTNHost implements Comparable<DTNHost> {
 			    		    host.NecessaryOfBack=host.Beforedestination;
 			    		    //host.destination=null;
 			    		    host.destination=host.PathNodeList.get(PathCount).getLocation();
+			    		    if(host.address==69) {
 			    			 host.BeforeBranchNode=host.PathNodeList.get(PathCount);
 			    			 host.AvoidanceNode=host.PathNodeList.get(PathCount+1);
+			    		    }
 			    		}
 			    	}
 			    }
 
-		/*前のマップノードに戻る経路設定
-		if(this.destination == null&&host.NecessaryOfBack!=null) {
-				if(!setNextWayBranchpoint(host.BeforeBranchNode)){
-					return;
-				  }
-				}*/
 
 
 
 		//前マップノードに到着した被災者は次動くときは災害地を避けたパスを選択しすすむ
 			if(host.BeforeBranchNode!=null) {
 					if(Coord.CompareIntEqual(host.location,host.BeforeBranchNode.location)) {
-					host.NecessaryOfBack=null; //前のマップノードに戻ると
+					host.NecessaryOfBack=null; 
 					host.destination=null;//目的地初期化
 				    //前のマップノードに戻ったら新しいルート設定
 					host.ReachBeforeBranch=true;
@@ -466,6 +462,7 @@ public class DTNHost implements Comparable<DTNHost> {
 			//戻ってきた前マップノードから別のルートを探索
 			if(this.destination == null&&host.ReachBeforeBranch==true) {
 				if (!setAnotherNextWaypoint(host.BeforeBranchNode)) {
+					host.ReachBeforeBranch=false;
 					return;
 				}
 			}
@@ -568,7 +565,7 @@ public class DTNHost implements Comparable<DTNHost> {
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
 
 				 this.PathCount++;
-				 System.out.println(this.PathNodeList.get(PathCount)+""+this.PathCount);
+				 System.out.println(this+"のパスノードリスト"+this.PathNodeList.get(PathCount)+""+this.PathCount);
 			     }
 		}
 
@@ -600,7 +597,8 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		path = movement.getPathAnotherRout(BranchNode);
 		this.PathNodeList=movement.getAnotherPathNodeList(BranchNode);
-		System.out.println(movement.getAnotherPathNodeList(BranchNode).size());
+		
+		System.out.println(this+"   "+this.PathNodeList.size()+"   交わすノード"+this.AvoidanceNode);
 		this.PathCount=-1;
 
 

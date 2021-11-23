@@ -200,7 +200,7 @@ public class PlayField extends JPanel {
 		for (DTNHost h : w.getHosts()) {
 			
 			//被災地ノードであれば被災ノード専用の描画クラス
-	       if(h.getAddress()>=1) {
+	       if(h.getAddress()>=100) {
 	    	   new NodeGraphic2(h).draw(g2); 
 	       }
 	       //通常ノードの場合の描画クラス
