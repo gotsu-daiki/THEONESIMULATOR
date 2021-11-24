@@ -39,7 +39,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	//public Coord Beforedestination;//最後に通った分岐点
  	public List<Coord> DisasterPoint2=new ArrayList<Coord>() {{add(LastMapNode);}};//ホストが持っている被災地の位置情報
 	public Coord DisasterPoint;
-	public Coord NecessaryOfBack=null; //前の分岐点に戻る必要があるかどうか
+	public MapNode NecessaryOfBack=null; //前の分岐点に戻る必要があるかどうか
 	public MapNode AvoidanceNode;//避けるべきマップノード
 	public boolean DateSendPermisstion=true;
 	public List<MapNode> PathNodeList=new ArrayList<>();  //被災者が現在進んでいるマップノードの列
@@ -432,13 +432,13 @@ public class DTNHost implements Comparable<DTNHost> {
 		//①災害地に到着したなら戻る必要がある
 		if(host.DisasterPoint!=null) {
 			    if(Coord.CompareIntEqual(host.location,host.DisasterPoint )) {
-			    		if(host.Beforedestination!=null) {
+			    		if(host.BeforeMapNode!=null) {
 			    			DataManager.Manager2(host);//災害地に訪れたノードを記録
-			    		    host.NecessaryOfBack=host.Beforedestination;
+			    		    host.NecessaryOfBack=host.BeforeMapNode;
 			    		    //host.destination=null;
 			    		    host.destination=host.PathNodeList.get(PathCount).getLocation();
 			    		    if(host.address==69) {
-			    			 host.BeforeBranchNode=host.PathNodeList.get(PathCount);
+			    			 host.BeforeMapNode=host.PathNodeList.get(PathCount);
 			    			 host.AvoidanceNode=host.PathNodeList.get(PathCount+1);
 			    		    }
 			    		}
@@ -449,9 +449,9 @@ public class DTNHost implements Comparable<DTNHost> {
 
 
 		//前マップノードに到着した被災者は次動くときは災害地を避けたパスを選択しすすむ
-			if(host.BeforeBranchNode!=null) {
-					if(Coord.CompareIntEqual(host.location,host.BeforeBranchNode.location)) {
-					host.NecessaryOfBack=null; 
+			if(host.BeforeMapNode!=null) {
+					if(Coord.CompareIntEqual(host.location,host.BeforeMapNode.location)) {
+					host.NecessaryOfBack=null;
 					host.destination=null;//目的地初期化
 				    //前のマップノードに戻ったら新しいルート設定
 					host.ReachBeforeBranch=true;
@@ -461,7 +461,7 @@ public class DTNHost implements Comparable<DTNHost> {
 
 			//戻ってきた前マップノードから別のルートを探索
 			if(this.destination == null&&host.ReachBeforeBranch==true) {
-				if (!setAnotherNextWaypoint(host.BeforeBranchNode)) {
+				if (!setAnotherNextWaypoint(host.BeforeMapNode)) {
 					host.ReachBeforeBranch=false;
 					return;
 				}
@@ -543,6 +543,8 @@ public class DTNHost implements Comparable<DTNHost> {
 		if (path == null) {
 			path = movement.getPath();
 			this.PathNodeList=movement.getPathNodeList();
+			System.out.println(this.PathNodeList=movement.getPathNodeList());
+			
 		}
 
 
@@ -564,7 +566,7 @@ public class DTNHost implements Comparable<DTNHost> {
 			     this.BeforeMapNode=this.PathNodeList.get(PathCount);
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
 
-				 
+
 				 System.out.println(this+"のパスノードリスト"+this.PathNodeList.get(PathCount)+""+this.PathCount);
 			     }
 		}
@@ -597,7 +599,7 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		path = movement.getPathAnotherRout(BranchNode);
 		this.PathNodeList=movement.getAnotherPathNodeList(BranchNode);
-		
+
 		System.out.println(this+"   "+this.PathNodeList.size()+"   交わすノード"+this.AvoidanceNode);
 		this.PathCount=-1;
 
