@@ -27,9 +27,12 @@ public class NodeGraphic extends PlayFieldGraphic {
 	private static List<DTNHost> highlightedNodes;
 	
 	private static Color rangeColor = Color.GREEN;
+	private static Color rangeColor2 = Color.RED;
 	private static Color conColor = Color.BLACK;
 	private static Color hostColor = Color.BLUE;
+	private static Color hostColor2=Color.RED;
 	private static Color hostNameColor = Color.BLUE;
+	private static Color hostNameColor2 = Color.RED;
 	private static Color msgColor1 = Color.BLUE;
 	private static Color msgColor2 = Color.BLUE;
 	private static Color msgColor3 = Color.RED;
@@ -48,6 +51,13 @@ public class NodeGraphic extends PlayFieldGraphic {
 		if (drawBuffer) {
 			drawMessages(g2);
 		}
+	}
+	
+	public void draw2(Graphics2D g2) {
+		drawHost2(g2);
+		/*if (drawBuffer) {
+			drawMessages(g2);
+		}*/
 	}
 
 	/**
@@ -124,6 +134,70 @@ public class NodeGraphic extends PlayFieldGraphic {
 		}
 	}
 
+	
+	private void drawHost2(Graphics2D g2) {
+		Coord loc = node.getLocation();
+
+		if (drawCoverage && node.isRadioActive()) {
+			ArrayList<NetworkInterface> interfaces = 
+				new ArrayList<NetworkInterface>();
+			interfaces.addAll(node.getInterfaces());
+			for (NetworkInterface ni : interfaces) {
+				//double range = ni.getTransmitRange();
+				//Ellipse2D.Double coverage;
+
+				/*coverage = new Ellipse2D.Double(scale(loc.getX()-range),
+						scale(loc.getY()-range), scale(range * 2), 
+						scale(range * 2)); */
+
+				       g2.setColor(conColor);	
+						g2.drawRect(scale(loc.getX()-1),scale(loc.getY()-1),
+								scale(2),scale(2)); 
+
+
+				// draw the "range" circle
+				//g2.setColor(rangeColor2);
+				//g2.draw(coverage);
+			}
+		}
+
+		if (drawConnections) {
+			g2.setColor(conColor);
+			Coord c1 = node.getLocation();
+			ArrayList<Connection> conList = new ArrayList<Connection>();
+			// create a copy to prevent concurrent modification exceptions
+			conList.addAll(node.getConnections());
+			for (Connection c : conList) {
+				DTNHost otherNode = c.getOtherNode(node);
+				Coord c2;
+				
+				if (otherNode == null) {
+					continue; /* disconnected before drawn */
+				}
+				c2 = otherNode.getLocation();				
+				g2.drawLine(scale(c1.getX()), scale(c1.getY()),
+						scale(c2.getX()), scale(c2.getY()));
+			}
+		}
+
+
+		/* draw node rectangle */
+		g2.setColor(hostColor2);	
+		g2.drawRect(scale(loc.getX()-20),scale(loc.getY()-20),
+		scale(40),scale(40));
+
+		if (isHighlighted()) {
+			g2.setColor(highlightedNodeColor);
+			g2.fillRect(scale(loc.getX()) - 3 ,scale(loc.getY()) - 3, 6, 6);			
+		}
+		
+		if (drawNodeName) {
+			g2.setColor(hostNameColor2);
+			// Draw node's address next to it
+			g2.drawString(node.toString(), scale(loc.getX()-20),
+					scale(loc.getY()-20));
+		}
+	}
 	/**
 	 * Sets whether radio coverage of nodes should be drawn
 	 * @param draw If true, radio coverage is drawn

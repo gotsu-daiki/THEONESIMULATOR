@@ -31,7 +31,7 @@ public class NodeGraphic2 extends PlayFieldGraphic {
 	private static Color hostColor = Color.BLUE;
 	//被災地ノード用の色設定
 	private static Color hostColor2=Color.RED;
-	private static Color hostNameColor = Color.BLUE;
+	private static Color hostNameColor2 = Color.RED;
 	private static Color msgColor1 = Color.BLUE;
 	private static Color msgColor2 = Color.GREEN;
 	private static Color msgColor3 = Color.RED;
@@ -46,7 +46,7 @@ public class NodeGraphic2 extends PlayFieldGraphic {
 
 	@Override
 	public void draw(Graphics2D g2) {
-		drawHost(g2);
+		drawHost2(g2);
 		if (drawBuffer) {
 			drawMessages(g2);
 		}
@@ -67,9 +67,10 @@ public class NodeGraphic2 extends PlayFieldGraphic {
 	 * Visualize node's location, radio ranges and connections
 	 * @param g2 The graphic context to draw to
 	 */
-	private void drawHost(Graphics2D g2) {
+	private void drawHost2(Graphics2D g2) {
 		Coord loc = node.getLocation();
 
+		
 		if (drawCoverage && node.isRadioActive()) {
 			ArrayList<NetworkInterface> interfaces = 
 				new ArrayList<NetworkInterface>();
@@ -121,7 +122,7 @@ public class NodeGraphic2 extends PlayFieldGraphic {
 		}
 		
 		if (drawNodeName) {
-			g2.setColor(hostNameColor);
+			g2.setColor(hostNameColor2);
 			// Draw node's address next to it
 			g2.drawString(node.toString(), scale(loc.getX()),
 					scale(loc.getY()));
