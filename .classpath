@@ -6,7 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry excluding="test/|movement/WorkingDayMovement.java|movement/StationaryMovement.java|movement/ExternalMovement.java|movement/RandomWalk.java|movement/RandomWaypoint.java|movement/ExternalPathMovement.java|movement/ClusterMovement.java|movement/GridLocation.java|movement/LinearFormation.java|movement/LinearMovement.java|movement/RandomDirection.java|movement/RandomDisasterPoint.java|movement/ModifiedRandomDirection.java" kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/ごつ/Desktop/workspace/08Week/One/src/lib/DTNConsoleConnection.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ごつ/Desktop/workspace/08Week/One/src/lib/ECLA.jar"/>
+	<classpathentry kind="lib" path="/home/morishita/デスクトップ/THE ONE SIMU/src/lib/DTNConsoleConnection.jar"/>
+	<classpathentry kind="lib" path="/home/morishita/デスクトップ/THE ONE SIMU/src/lib/ECLA.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
