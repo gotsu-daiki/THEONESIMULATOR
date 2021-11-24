@@ -10,6 +10,7 @@ import java.util.List;
  * transformations
  */
 public class Coord implements Cloneable, Comparable<Coord> {
+	private static final String Coord = null;
 	private double x;
 	private double y;
 	
@@ -31,6 +32,8 @@ public class Coord implements Cloneable, Comparable<Coord> {
 		this.x = x;
 		this.y = y;		
 	}
+	
+	
 	
 	/**
 	 * Sets this coordinate's location to be equal to other
@@ -191,20 +194,24 @@ public static boolean CompareEqual(Coord a,Coord b) {
 	}
 		return false;
 }
-	
-	public static boolean containsIntlocation(List<Coord>a,Coord b) {
+
+/**
+ * listの中にcoordがあるかどうか判別
+ * @param Arraylist list
+ * @param Coord　coord
+ * @return 
+ */
+public static boolean containsIntlocation(List<Coord>list,Coord coord) {
 		int i=0;
-		for(a.get(i);a.get(i)==null;i++) {
-			if(a.get(i)==null)
-				break;
-			if((int)a.get(i).getX()==(int)b.getX()) {
-				if((int)a.get(i).getY()==(int)b.getY()) {
-					return true;
-				}
+		for(Coord COORD:list) {
+			if(CompareIntEqual(COORD, coord)){
+				return true;
 			}
-		
-		}
-		
+		i++;
+		}	
 		return false;	
 	}
+
+
+
 }
