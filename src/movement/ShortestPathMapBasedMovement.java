@@ -118,16 +118,16 @@ public class ShortestPathMapBasedMovement extends MapBasedMovement implements
 	*/
 
 
-	public Path getPathAnotherRout(MapNode BranchNode) {
+	public Path getPathAnotherRout(MapNode BeforeMapNode) {
 
 		Path p = new Path(generateSpeed());
 		MapNode to = pois.selectDestination();
 
-		List<MapNode> nodePath = pathFinder.getShortestPath(BranchNode,to,host);
+		List<MapNode> nodePath = pathFinder.getShortestPath(BeforeMapNode,to,host);
 
 		// this assertion should never fire if the map is checked in read phase
 		assert nodePath.size() > 0 : "No path from " + lastMapNode + " to " +
-		BranchNode+ ". The simulation map isn't fully connected";
+		BeforeMapNode+ ". The simulation map isn't fully connected";
 
 		for (MapNode node : nodePath) { // create a Path from the shortest path
 			//System.out.println(nodePath);
@@ -141,6 +141,8 @@ public class ShortestPathMapBasedMovement extends MapBasedMovement implements
 		return p;
 	}
 
+	
+	
 
 	//災害地を避けたパスを返す
 	@Override
