@@ -53,6 +53,8 @@ public class DisasterPointMassage extends Application {
 	public static final String PING_PING_SIZE = "pingSize";
 	/** Size of the pong message */
 	public static final String PING_PONG_SIZE = "pongSize";
+	
+	public static final String NORFHOSTS = "norfhosts";
 
 	/** Application ID */
 	public static final String APP_ID = "gototest";
@@ -66,6 +68,7 @@ public class DisasterPointMassage extends Application {
 	public static int		destMax=1;
 	private int		pingSize=1;
 	private int		pongSize=1;
+	public static int Host=1;
 	private Random	rng;
 	private int i=0;
 	//private List<String> sharenode =new ArrayList<String>();
@@ -104,6 +107,9 @@ public class DisasterPointMassage extends Application {
 			this.destMin = destination[0];
 			this.destMax = destination[1];
 		}
+		if (s.contains(NORFHOSTS)){
+			this.Host = s.getInt(NORFHOSTS);
+		}
 
 		rng = new Random(this.seed);
 		super.setAppID(APP_ID);
@@ -121,6 +127,7 @@ public class DisasterPointMassage extends Application {
 		this.pongSize = a.getPongSize();
 		this.pingSize = a.getPingSize();
 		this.rng = new Random(this.seed);
+
 	}
 
 	/**
@@ -133,23 +140,18 @@ public class DisasterPointMassage extends Application {
 	 */
 	@Override
 	public Message handle(Message msg, DTNHost host) {
-
 	//受け取ったデータの中にある被災地の位置情報をホストは取得する
 		Coord type = (Coord)msg.getProperty("DisasterCoord");
 		
-	   host.DisasterPoint=type;
-		//host.DisasterPoint2.add(type);
-		
-		//  System.out.println(host+"は"+type+"を取得");
+	  // host.DisasterPoint=type;
+		host.DisasterPointlist.add(type);
 		
 		
 	//どこからどんなデータを受け取ったか通知
 		//System.out.print("目的ノード:"+msg.getTo()+" 受信ノード:"+host+
 				// "  時間:"+SimClock.getIntTime());
 
-	   if(!host.toString().contains("d")) {
-		DataManager.Manager(host);
-	   }
+	   
 		
 		
 		if (type==null)
@@ -168,7 +170,8 @@ public class DisasterPointMassage extends Application {
 			//"  スループット:"+(double)msg.size/(double)(SimClock.getIntTime()-interval)+"(kbps)");
 			
 		
-		return msg;
+		
+   return msg;
 	}
 
 	/**
@@ -176,7 +179,7 @@ public class DisasterPointMassage extends Application {
 	 *
 	 * @return host
 	 */
-	private DTNHost randomHost() {
+	/*private DTNHost randomHost() {
 		int destaddr = 0;
 		if (destMax == destMin) {
 			destaddr = destMin;
@@ -184,7 +187,17 @@ public class DisasterPointMassage extends Application {
 		destaddr = destMin + rng.nextInt(destMax - destMin);
 		World w = SimScenario.getInstance().getWorld();
 
-		return w.getNodeByAddress(20);
+		return w.getNodeByAddress(100);
+	}
+
+	@Override
+	public Application replicate() {
+		return new DisasterPointMassage(this);
+	}*/
+	
+	private DTNHost randomHost() {
+		World w = SimScenario.getInstance().getWorld();
+		return w.getNodeByAddress(100);
 	}
 
 	@Override
@@ -225,7 +238,7 @@ public class DisasterPointMassage extends Application {
 public void DataSend(DTNHost host) {
 
   //ソースホストを被災地ノードに限定する
-		if(host.address>=1){
+		if(host.address>=this.Host){
 				Message m = new Message(host,randomHost(),"disaster"+host.address,getPingSize());
 				m.addProperty("DisasterCoord", host.location);;
 				m.setAppID(APP_ID);
