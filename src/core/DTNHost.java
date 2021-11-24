@@ -37,7 +37,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public Coord destination;	// 現在目指しているマップノードの座標（中継地点）
 	public Coord LastMapNode;  //ホストの最終目的地点
 	//public Coord Beforedestination;//最後に通った分岐点
- 	//public List<Coord> DisasterPoint2=new ArrayList<Coord>() {{add(LastMapNode);}};//ホストが持っている被災地の位置情報
+ 	public List<Coord> DisasterPointlist=new ArrayList<Coord>();//ホストが持っている被災地の位置情報
 	public Coord DisasterPoint; //ホストが既知の災害地点座標
 	
 	public MapNode AvoidanceNode;//避けるべきマップノード
@@ -458,38 +458,38 @@ public class DTNHost implements Comparable<DTNHost> {
 			
 			
 			//①災害地に到着したなら戻る必要がある
-			if(host.DisasterPoint!=null) {
-				    if(Coord.CompareIntEqual(host.location,host.DisasterPoint )) {
-				    		if(host.BeforeMapNode!=null) {	
+			if(host.DisasterPointlist!=null&&host.BeforeMapNode!=null) {
+				    if((Coord.containsIntlocation(DisasterPointlist, host.location))){
 				    			
+				    	//避けるマップノードが最終目的地なら災害地点を無視します。
+				    		if(!Coord.CompareEqual(host.LastMapNode,host.PathNodeList.get(PathCount+1).getLocation())) {
 				    			host.AvoidanceNode=host.PathNodeList.get(PathCount+1);//目的地としていたマップノードを回避ノードに設定
 				    			host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
-				    		    
-				    		    DataManager.Manager2(host);//災害地に訪れたノードを記録
-				    		}
+				    			if(this.address==73) {
+				    					System.out.println(this);
+				    				}
+				    			DataManager.Manager2(host);//災害地に訪れたノードを記録
+				    			}
 				    	}
-				    }
+			}
 
 
 
 			//②前マップノードに到着→災害地を避けてパス選択
 				if(host.BeforeMapNode!=null&&Coord.CompareIntEqual(host.destination,host.BeforeMapNode.location)) {
 						if(Coord.CompareIntEqual(host.location,host.BeforeMapNode.location)) {	
-							setAnotherNextWaypoint(host.BeforeMapNode);
+						
+							setAnotherNextWaypoint(host.BeforeMapNode);//別ルートのNextwayPointを決める
+							
+							}
 					}
-				}
 
 
 
-		
-
-
-
-		//最終目的地点についた被災者は前アクション不可
+		//最終目的地点についた被災者は停止
 			if(host.LastMapNode!=null) {
-				if(Coord.CompareIntEqual(host.location,host.LastMapNode)) {
-					 host.MoveActive=false;
-				}
+				if(Coord.CompareIntEqual(host.location,host.LastMapNode)) 
+					 host.MoveActive=false;				
 			}
 
 
@@ -530,6 +530,8 @@ public class DTNHost implements Comparable<DTNHost> {
 
 			//新しいマップノードに到着したら、最後に通ったマップノードを更新する
 			if(Coord.CompareEqual(this.location,this.destination)) {
+				
+				
 			     this.PathCount++;
 			     this.BeforeMapNode=this.PathNodeList.get(PathCount);
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
@@ -569,12 +571,19 @@ public class DTNHost implements Comparable<DTNHost> {
 		this.PathNodeList=movement.getAnotherPathNodeList(BeforeMapNode);
 
 		//System.out.println(this+"   "+this.PathNodeList.size()+"   交わすノード"+this.AvoidanceNode);
+		//System.out.println(this.path.getCoords().size()==0);
+	
 		this.PathCount=-1;
 
-
+		if(this.path.getCoords().size()==0) {
+			this.MoveActive=false;
+			System.out.println(this);
+			return false;
+		}	
+		
 		this.destination = path.getNextWaypoint();
 		this.speed = path.getSpeed();
-
+         
 
 		if (this.movListeners != null) {
 			for (MovementListener l : this.movListeners) {
@@ -688,5 +697,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public int compareTo(DTNHost h) {
 		return this.getAddress() - h.getAddress();
 	}
+	
+	
 
 }
