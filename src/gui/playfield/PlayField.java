@@ -26,6 +26,7 @@ import movement.map.SimMap;
 import core.Coord;
 import core.DTNHost;
 import core.World;
+import applications.DisasterPointMassage;
 
 /**
  * The canvas where node graphics and message visualizations are drawn.
@@ -200,7 +201,7 @@ public class PlayField extends JPanel {
 		for (DTNHost h : w.getHosts()) {
 			
 			//被災地ノードであれば被災ノード専用の描画クラス
-	       if(h.getAddress()>=100) {
+	       if(h.getAddress()>=DisasterPointMassage.Host) {
 	    	   new NodeGraphic(h).draw2(g2); 
 	       }
 	       //通常ノードの場合の描画クラス
