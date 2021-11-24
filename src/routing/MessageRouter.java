@@ -355,6 +355,7 @@ public abstract class MessageRouter {
 		for (Application app : getApplications(incoming.getAppID())) {
 			// Note that the order of applications is significant
 			// since the next one gets the output of the previous.
+			
 			outgoing = app.handle(outgoing, this.host);
 			if (outgoing == null) break; // Some app wanted to drop the message
 		}
