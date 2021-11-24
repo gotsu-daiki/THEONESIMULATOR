@@ -426,16 +426,14 @@ public class DTNHost implements Comparable<DTNHost> {
 			return;
 		}
 
+		
 		//初期位置から最終目的地点までのパスを設定
 		   if(this.destination == null) {
 					if (!setNextWaypoint()) {
 						return;
 					}
+			}
 
-				}
-
-		
-			
 			
       //destinationに向けてホストを少しずつ動かす
 			possibleMovement = timeIncrement * speed;
@@ -462,9 +460,10 @@ public class DTNHost implements Comparable<DTNHost> {
 			//①災害地に到着したなら戻る必要がある
 			if(host.DisasterPoint!=null) {
 				    if(Coord.CompareIntEqual(host.location,host.DisasterPoint )) {
-				    		if(host.BeforeMapNode!=null) {	 
-				    			host.AvoidanceNode=host.PathNodeList.get(PathCount);//目的地としていたマップノードを回避ノードに設定
-				    			 host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
+				    		if(host.BeforeMapNode!=null) {	
+				    			
+				    			host.AvoidanceNode=host.PathNodeList.get(PathCount+1);//目的地としていたマップノードを回避ノードに設定
+				    			host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
 				    		    
 				    		    DataManager.Manager2(host);//災害地に訪れたノードを記録
 				    		}
@@ -476,7 +475,6 @@ public class DTNHost implements Comparable<DTNHost> {
 			//②前マップノードに到着→災害地を避けてパス選択
 				if(host.BeforeMapNode!=null&&Coord.CompareIntEqual(host.destination,host.BeforeMapNode.location)) {
 						if(Coord.CompareIntEqual(host.location,host.BeforeMapNode.location)) {	
-							host.MoveActive=false;
 							setAnotherNextWaypoint(host.BeforeMapNode);
 					}
 				}
