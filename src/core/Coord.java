@@ -229,3 +229,8 @@ public static Coord avoidNodenumber(List<Coord>path,List<Coord>disaster) {
 return null;
 
 }
+
+
+
+
+}
