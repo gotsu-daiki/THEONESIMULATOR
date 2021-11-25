@@ -575,6 +575,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	
 		this.PathCount=-1;
 
+		//災害地を交わしたルートがない場合は停止
 		if(this.path.getCoords().size()==0) {
 			this.MoveActive=false;
 			System.out.println(this);
