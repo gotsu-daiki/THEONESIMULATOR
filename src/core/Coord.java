@@ -212,6 +212,20 @@ public static boolean containsIntlocation(List<Coord>list,Coord coord) {
 		return false;	
 	}
 
-
+public static Coord avoidNodenumber(List<Coord>path,List<Coord>disaster) {
+	int i,n;
+	n=path.size();
+	for(Coord COORD:disaster	) {
+		for(i=0;i+1<n;i++) {
+		 //disaster座標がパスのi番目とi+1番目の間にあるかどうか判断
+		if(path.get(i+1).getX()>path.get(i).getX()&&COORD.getX()>=path.get(i).getX()&&COORD.getX()<=path.get(i+1).getX()||path.get(i+1).getX()<path.get(i).getX()&&COORD.getX()<=path.get(i).getX()&&COORD.getX()>=path.get(i+1).getX()) {
+			double b=path.get(i).getY()-((path.get(i+1).getY()-path.get(i).getY())/(path.get(i+1).getX()-path.get(i).getX()))*path.get(i).getX();
+			if(COORD.getY()==((path.get(i+1).getY()-path.get(i).getY())/(path.get(i+1).getX()-path.get(i).getX()))*COORD.getX()-b)
+	    	  return path.get(i+1);
+	    	 }			
+		}
+	
+    }
+return null;
 
 }
