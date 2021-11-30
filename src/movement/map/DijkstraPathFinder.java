@@ -195,7 +195,7 @@ public class DijkstraPathFinder {
 	
 				//nが災害地を踏むエッジの目的地マップノードであったらば距離無限
 				
-				 if(host.AvoidanceNode!=null&&Coord.CompareEqual(n.getLocation(),host.AvoidanceNode.getLocation() )){
+				 if(host.AvoidanceNode!=null&&Coord.containsIntlocation2(host.AvoidanceNode,n.getLocation())){
 				    setDistance(n,INFINITY);
 		
 				    }
