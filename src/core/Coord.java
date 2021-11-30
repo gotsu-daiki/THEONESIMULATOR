@@ -220,12 +220,10 @@ public static boolean containsIntlocation(List<Coord>list,Coord coord) {
  * @return 
  */
 public static boolean containsIntlocation2(List<MapNode>list,Coord coord) {
-		int i=0;
 		for(MapNode COORD:list) {
 			if(CompareIntEqual(COORD.location, coord)){
 				return true;
 			}
-		i++;
 		}	
 		return false;	
 	}
