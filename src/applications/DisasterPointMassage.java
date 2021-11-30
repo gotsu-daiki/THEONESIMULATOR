@@ -145,7 +145,11 @@ public class DisasterPointMassage extends Application {
 		
 	  // host.DisasterPoint=type;
 		host.DisasterPointlist.add(type);
-		
+		System.out.println(msg.path.get(msg.path.size()-1));
+		if(msg.path.get(msg.path.size()-1).address<500) {
+			host.returning=true;
+		}
+		//if(msg.path.get(msg.path.size()-1).address<)
 		
 	//どこからどんなデータを受け取ったか通知
 		//System.out.print("目的ノード:"+msg.getTo()+" 受信ノード:"+host+

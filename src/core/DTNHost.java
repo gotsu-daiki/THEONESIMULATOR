@@ -31,7 +31,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public Coord LastMapNode;  //ホストの最終目的地点
 	//public Coord Beforedestination;//最後に通った分岐点
  	public List<Coord> DisasterPointlist=new ArrayList<Coord>();//ホストが持っている被災地の位置情報
-	public Coord DisasterPoint; //ホストが既知の災害地点座標
+	//public Coord DisasterPoint; //ホストが既知の災害地点座標
 	
 	//public MapNode AvoidanceNode;//避けるべきマップノード
 	public List<MapNode> AvoidanceNode=new ArrayList<>();
@@ -40,6 +40,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public int PathCount=-1; //被災者がパスの何番目のマップノードまで進んだか確認する
 	//public boolean ReachBeforeBranch=false;
 	public boolean MoveActive=true;
+	public boolean returning=false;
 	public MapNode BeforeMapNode;
 	
 	
@@ -48,7 +49,8 @@ public class DTNHost implements Comparable<DTNHost> {
 	private Path path;
 	private double speed;
 	private double nextTimeToMove;
-	private String name;
+	//private String name;
+	public String name;
 	private List<MessageListener> msgListeners;
 	private List<MovementListener> movListeners;
 	private List<NetworkInterface> net;
@@ -398,13 +400,34 @@ public class DTNHost implements Comparable<DTNHost> {
 				    		if(!Coord.CompareEqual(host.LastMapNode,host.PathNodeList.get(PathCount+1).getLocation())) {
 				    			host.AvoidanceNode.add(host.PathNodeList.get(PathCount+1));//目的地としていたマップノードを回避ノードに設定
 				    			host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
-				    			if(this.address==73) {
-				    					System.out.println(this);
+				    			if(this.address==308) {
+				    					//System.out.println(this);
 				    				}
 				    			DataManager.Manager2(host);//災害地に訪れたノードを記録
 				    			}
 				    	}
 			}
+			
+			
+			//①自分のパスに災害地が含まれていたら
+			if(host.DisasterPointlist.size()!=0&&host.returning==true) {
+				host.returning=false;
+				if(Coord.PathContainsAvoidanceNode(host.PathNodeList,host.DisasterPointlist,host)) {
+				
+				//現在の目的地が回避ノードであれば１つ前のマップノードに引き返す
+					if(Coord.containsIntlocation2(host.AvoidanceNode,host.destination))
+					host.destination=host.BeforeMapNode.location;
+				
+				//そうでなければ、そのまま目的地ノードまでレッツゴー
+					else;
+				   }
+				else;
+				
+			}
+				
+				
+				
+				
 			//②前マップノードに到着→災害地を避けてパス選択
 				if(host.BeforeMapNode!=null&&Coord.CompareIntEqual(host.destination,host.BeforeMapNode.location)) {
 						if(Coord.CompareIntEqual(host.location,host.BeforeMapNode.location)) {	

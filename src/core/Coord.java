@@ -227,23 +227,34 @@ public static boolean containsIntlocation2(List<MapNode>list,Coord coord) {
 		}	
 		return false;	
 	}
-
-public static MapNode avoidNodenumber(List<MapNode>path,List<Coord>disaster) {
+/**
+ * listの中にcoordが含まれいているかどうか
+ * @param Arraylist list　マップノード
+ * @param Coord　coord
+ * @return 　　含まれていればtrue,そうでなければfalse
+ */
+public static Boolean PathContainsAvoidanceNode(List<MapNode>path,List<Coord>disaster,DTNHost host) {
 	int i,n;
 	n=path.size();
 	for(Coord COORD:disaster	) {
 		for(i=0;i+1<n;i++) {
 		 //disaster座標がパスのi番目とi+1番目の間にあるかどうか判断
-		if(path.get(i+1).location.getX()>path.get(i).location.getX()&&COORD.getX()>=path.get(i).location.getX()&&COORD.getX()<=path.get(i+1).location.getX()||path.get(i+1).location.getX()<path.get(i).location.getX()&&COORD.getX()<=path.get(i).location.getX()&&COORD.getX()>=path.get(i+1).location.getX()) {
-			double b=path.get(i).location.getY()-((path.get(i+1).location.getY()-path.get(i).location.getY())/(path.get(i+1).location.getX()-path.get(i).location.getX()))*path.get(i).location.getX();
-			if(COORD.getY()==((path.get(i+1).location.getY()-path.get(i).location.getY())/(path.get(i+1).location.getX()-path.get(i).location.getX()))*COORD.getX()-b)
-	    	  
-				return path.get(i+1);
-	    	 }			
+			if(path.get(i+1).location.getX()>path.get(i).location.getX()&&COORD.getX()>=path.get(i).location.getX()&&COORD.getX()<=path.get(i+1).location.getX()||path.get(i+1).location.getX()<path.get(i).location.getX()&&COORD.getX()<=path.get(i).location.getX()&&COORD.getX()>=path.get(i+1).location.getX()) {
+				
+			    double a=((path.get(i+1).location.getY()-path.get(i).location.getY())/(path.get(i+1).location.getX()-path.get(i).location.getX()));
+			    double b=path.get(i).location.getY()-a*path.get(i).location.getX();
+				//if(host.address==418) {
+					System.out.println(COORD.getY()+"+"+(a*COORD.getX()+b));
+					if((int)(COORD.getY())-a*COORD.getX()+b<=15||COORD.getY()-a*COORD.getX()+b>=-15) {
+						
+						host.AvoidanceNode.add(path.get(i+1));
+						
+							return true;//}
+	    	 		}			
+				}
 		}
-	
-    }
-return null;
+	}
+return false;
 
 }
 

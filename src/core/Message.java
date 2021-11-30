@@ -23,7 +23,8 @@ public class Message implements Comparable<Message> {
 	/** Size of the message (bytes) */
 	public int size;
 	/** List of nodes this message has passed */
-	private List<DTNHost> path;
+	//private List<DTNHost> path;
+	public List<DTNHost> path;
 	/** Next unique identifier to be given */
 	private static int nextUniqueId;
 	/** Unique ID of this message */
