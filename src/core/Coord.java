@@ -5,6 +5,7 @@
 package core;
 
 import java.util.List;
+import movement.map.MapNode;
 /**
  * Class to hold 2D coordinates and perform simple arithmetics and
  * transformations
@@ -212,16 +213,34 @@ public static boolean containsIntlocation(List<Coord>list,Coord coord) {
 		return false;	
 	}
 
-public static Coord avoidNodenumber(List<Coord>path,List<Coord>disaster) {
+/**
+ * listの中にcoordがあるかどうか判別
+ * @param Arraylist list
+ * @param Coord　coord
+ * @return 
+ */
+public static boolean containsIntlocation2(List<MapNode>list,Coord coord) {
+		int i=0;
+		for(MapNode COORD:list) {
+			if(CompareIntEqual(COORD.location, coord)){
+				return true;
+			}
+		i++;
+		}	
+		return false;	
+	}
+
+public static MapNode avoidNodenumber(List<MapNode>path,List<Coord>disaster) {
 	int i,n;
 	n=path.size();
 	for(Coord COORD:disaster	) {
 		for(i=0;i+1<n;i++) {
 		 //disaster座標がパスのi番目とi+1番目の間にあるかどうか判断
-		if(path.get(i+1).getX()>path.get(i).getX()&&COORD.getX()>=path.get(i).getX()&&COORD.getX()<=path.get(i+1).getX()||path.get(i+1).getX()<path.get(i).getX()&&COORD.getX()<=path.get(i).getX()&&COORD.getX()>=path.get(i+1).getX()) {
-			double b=path.get(i).getY()-((path.get(i+1).getY()-path.get(i).getY())/(path.get(i+1).getX()-path.get(i).getX()))*path.get(i).getX();
-			if(COORD.getY()==((path.get(i+1).getY()-path.get(i).getY())/(path.get(i+1).getX()-path.get(i).getX()))*COORD.getX()-b)
-	    	  return path.get(i+1);
+		if(path.get(i+1).location.getX()>path.get(i).location.getX()&&COORD.getX()>=path.get(i).location.getX()&&COORD.getX()<=path.get(i+1).location.getX()||path.get(i+1).location.getX()<path.get(i).location.getX()&&COORD.getX()<=path.get(i).location.getX()&&COORD.getX()>=path.get(i+1).location.getX()) {
+			double b=path.get(i).location.getY()-((path.get(i+1).location.getY()-path.get(i).location.getY())/(path.get(i+1).location.getX()-path.get(i).location.getX()))*path.get(i).location.getX();
+			if(COORD.getY()==((path.get(i+1).location.getY()-path.get(i).location.getY())/(path.get(i+1).location.getX()-path.get(i).location.getX()))*COORD.getX()-b)
+	    	  
+				return path.get(i+1);
 	    	 }			
 		}
 	
