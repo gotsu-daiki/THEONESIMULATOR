@@ -40,7 +40,7 @@ public class DTNHost implements Comparable<DTNHost> {
  	public List<Coord> DisasterPointlist=new ArrayList<Coord>();//ホストが持っている被災地の位置情報
 	public Coord DisasterPoint; //ホストが既知の災害地点座標
 	
-	public MapNode AvoidanceNode;//避けるべきマップノード
+	public List<MapNode> AvoidanceNode=new ArrayList<>();//避けるべきマップノード
 	public boolean DateSendPermisstion=true;
 	public List<MapNode> PathNodeList=new ArrayList<>();  //被災者が現在進んでいるマップノードの列
 	public int PathCount=-1; //被災者がパスの何番目のマップノードまで進んだか確認する
@@ -459,11 +459,11 @@ public class DTNHost implements Comparable<DTNHost> {
 			
 			//①災害地に到着したなら戻る必要がある
 			if(host.DisasterPointlist!=null&&host.BeforeMapNode!=null) {
-				    if((Coord.containsIntlocation(DisasterPointlist, host.location))){
-				    			
+				   if((Coord.containsIntlocation(DisasterPointlist, host.location))){
+				  
 				    	//避けるマップノードが最終目的地なら災害地点を無視します。
 				    		if(!Coord.CompareEqual(host.LastMapNode,host.PathNodeList.get(PathCount+1).getLocation())) {
-				    			host.AvoidanceNode=host.PathNodeList.get(PathCount+1);//目的地としていたマップノードを回避ノードに設定
+				    			host.AvoidanceNode.add(host.PathNodeList.get(PathCount+1));//目的地としていたマップノードを回避ノードに設定
 				    			host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
 				    			if(this.address==73) {
 				    					System.out.println(this);
@@ -472,6 +472,11 @@ public class DTNHost implements Comparable<DTNHost> {
 				    			}
 				    	}
 			}
+			
+			/*②.2　被災者ノードから災害地のデータを受け取った時、パス何に災害地ノードがあれば回避ノードに追加して経路選択
+			if(host.DisasterPointlist!=null){
+				host.AvoidanceNode=Coord.avoidNodenumber(host.PathNodeList, DisasterPointlist);
+			}*/
 
 
 
