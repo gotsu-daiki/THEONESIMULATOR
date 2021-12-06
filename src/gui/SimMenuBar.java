@@ -7,6 +7,7 @@ package gui;
 import gui.nodefilter.NodeMessageFilter;
 import gui.playfield.PlayField;
 import gui.playfield.NodeGraphic;
+import gui.playfield.NodeGraphic2;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -171,6 +172,7 @@ public class SimMenuBar extends JMenuBar implements ActionListener {
 	private void updatePlayfieldSettings() {
 		NodeGraphic.setDrawNodeName(showNodeName.isSelected());
 		NodeGraphic.setDrawCoverage(showNodeCoverage.isSelected());
+		NodeGraphic2.setDrawCoverage(showNodeCoverage.isSelected());
 		NodeGraphic.setDrawConnections(showNodeConnections.isSelected());
 		NodeGraphic.setDrawBuffer(showBuffer.isSelected());
 		field.setShowMapGraphic(enableMapGraphic.isSelected());
