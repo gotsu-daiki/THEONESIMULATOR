@@ -27,7 +27,7 @@ public class NodeGraphic extends PlayFieldGraphic {
 	private static List<DTNHost> highlightedNodes;
 	
 	private static Color rangeColor = Color.GREEN;
-	private static Color rangeColor2 = Color.RED;
+	private static Color rangeColor2 = Color.GREEN;
 	private static Color conColor = Color.BLACK;
 	private static Color hostColor = Color.BLUE;
 	private static Color hostColor2=Color.RED;
@@ -82,6 +82,7 @@ public class NodeGraphic extends PlayFieldGraphic {
 			ArrayList<NetworkInterface> interfaces = 
 				new ArrayList<NetworkInterface>();
 			interfaces.addAll(node.getInterfaces());
+			
 			for (NetworkInterface ni : interfaces) {
 				double range = ni.getTransmitRange();
 				Ellipse2D.Double coverage;
@@ -90,6 +91,8 @@ public class NodeGraphic extends PlayFieldGraphic {
 						scale(loc.getY()-range), scale(range * 2), 
 						scale(range * 2)); 
 
+				
+				
 				// draw the "range" circle
 				g2.setColor(rangeColor);
 				g2.draw(coverage);
@@ -141,24 +144,29 @@ public class NodeGraphic extends PlayFieldGraphic {
 		if (drawCoverage && node.isRadioActive()) {
 			ArrayList<NetworkInterface> interfaces = 
 				new ArrayList<NetworkInterface>();
+			
 			interfaces.addAll(node.getInterfaces());
 			for (NetworkInterface ni : interfaces) {
-				//double range = ni.getTransmitRange();
-				//Ellipse2D.Double coverage;
+				double range = ni.getTransmitRange();
+				Ellipse2D.Double coverage;
 
-				/*coverage = new Ellipse2D.Double(scale(loc.getX()-range),
+				coverage = new Ellipse2D.Double(scale(loc.getX()-range),
 						scale(loc.getY()-range), scale(range * 2), 
-						scale(range * 2)); */
+						scale(range * 2)); 
 
-				       g2.setColor(conColor);	
-						g2.drawRect(scale(loc.getX()-1),scale(loc.getY()-1),
-								scale(2),scale(2)); 
-
+				
 
 				// draw the "range" circle
-				//g2.setColor(rangeColor2);
-				//g2.draw(coverage);
+				g2.setColor(rangeColor2);
+				g2.draw(coverage);
 			}
+			g2.setColor(conColor);	
+				g2.drawRect(scale(loc.getX()-1),scale(loc.getY()-1),
+						scale(2),scale(2));        
+
+			
+			
+			
 		}
 
 		if (drawConnections) {
