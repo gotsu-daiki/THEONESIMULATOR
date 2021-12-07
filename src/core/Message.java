@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import movement.map.MapNode;
+
 /**
  * A message that is created at a node or passed between nodes.
  */
@@ -35,6 +37,10 @@ public class Message implements Comparable<Message> {
 	private double timeCreated;
 	/** Initial TTL of the message */
 	private int initTtl;
+	
+	public List<MapNode> MsgAvoidance=new ArrayList<>();
+	
+	public int addnumber=0; //メッセージにどれだけの回避ノードの情報を載せたかを表す数字
 
 	/** if a response to this message is required, this is the size of the
 	 * response message (or 0 if no response is requested) */
