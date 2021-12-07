@@ -193,14 +193,11 @@ public class DijkstraPathFinder {
 			
 			if (distances.get(n) > nDist) { // stored distance > found dist?　蓄積している距離より新しく見つけた距離のほうがみじかければ 
 	
-				//nが災害地を踏むエッジの目的地マップノードであったらば距離無限
 				
-				if(host.AvoidanceNode!=null&&Coord.containsIntlocation2(host.AvoidanceNode,n.getLocation()))
-					 setDistance(n,INFINITY);
-					//  if(Coord.containsIntlocation2(host.AvoidanceNode,n.getLocation()))*/
-						
-		
-				    
+				 if(host.AvoidanceNode!=null&&Coord.containsIntlocation2(host.AvoidanceNode,n.getLocation())){
+					    setDistance(n,INFINITY);
+			
+					    }	    
 			    else {	
 					 prevNodes.put(n, node);	//nノードの前のマップノードにnodeを引っ付ける
 					 setDistance(n, nDist);
