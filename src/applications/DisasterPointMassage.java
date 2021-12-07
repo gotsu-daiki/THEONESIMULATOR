@@ -21,9 +21,12 @@ import core.Settings;
 import core.SimClock;
 import core.SimScenario;
 import core.World;
+import movement.map.MapNode;
+
 import java.util.List;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -72,7 +75,8 @@ public class DisasterPointMassage extends Application {
 	private Random	rng;
 	private int i=0;
 	//private List<String> sharenode =new ArrayList<String>();
-	private List<String> data =new ArrayList<>();
+	public List<MapNode> type2=new ArrayList<>();
+	public List<MapNode> AvoidanceNode1=new ArrayList<>();
 
 
 	//private double share;
@@ -130,6 +134,8 @@ public class DisasterPointMassage extends Application {
 
 	}
 
+	
+	
 	/**
 	 * Handles an incoming message. If the message is a ping message replies
 	 * with a pong message. Generates events for ping and pong messages.
@@ -140,13 +146,53 @@ public class DisasterPointMassage extends Application {
 	 */
 	@Override
 	public Message handle(Message msg, DTNHost host) {
-	//受け取ったデータの中にある被災地の位置情報をホストは取得する
-		Coord type = (Coord)msg.getProperty("DisasterCoord");
 		
-	  // host.DisasterPoint=type;
-		host.DisasterPointlist.add(type);
-		System.out.println(msg.path.get(msg.path.size()-1));
-		if(msg.path.get(msg.path.size()-1).address<500) {
+	//受け取ったデータの中にある被災地の位置情報をホストは取得する
+	Coord type = (Coord)msg.getProperty("DisasterCoord");
+    host.DisasterPointlist.add(type);
+	
+	//メッセージの回避エッジリストをホストが所持する回避エッジリストに追加していく
+	List<List<MapNode>> list = (List<List<MapNode>>)msg.getProperty("AVOID");
+    
+	if(list!=null) {
+		int length=list.size();
+		
+		for(int i=0;i<length;i++) {
+			if(!host.AvoidanceEdge.contains(list.get(i)))
+				host.AvoidanceEdge.add(list.get(i));
+		}			
+	}
+	
+   
+			
+	if(host.AvoidanceNode!=null&&host.AvoidanceNode.size()!=0)
+		System.out.println(host.AvoidanceNode);
+	
+//災害地からデータを受け取った時messageにエッジ情報を乗せる
+	if(msg.path.get(msg.path.size()-2).address<500) {
+	
+		if(host.PathCount>=0) {
+			
+		 //avoidanceNode1で１つのエッジ→マップノードのペアを作る
+			AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
+			AvoidanceNode1.add(host.PathNodeList.get(host.PathCount));
+			
+		//avoidanceNode2で避けるエッジを複数個所持できるようにする
+			host.AvoidanceEdge.add(AvoidanceNode1);
+		}
+	msg.updateProperty("AVOID", host.AvoidanceEdge);
+	
+	/*System.out.println(msg.path);
+	System.out.println(host.PathNodeList);
+	System.out.println("目的地"+host.destination);
+	System.out.println(type);
+	System.out.println("前マップノード"+host.PathNodeList.get(host.PathCount));*/
+	
+	}
+	
+
+	//被災者ノードから情報を受け取ったノードは自分のルートに回避ノードが存在するか確かめる
+		if(msg.path.get(msg.path.size()-2).address<500) {
 			host.returning=true;
 		}
 		//if(msg.path.get(msg.path.size()-1).address<)
@@ -177,6 +223,7 @@ public class DisasterPointMassage extends Application {
 		
    return msg;
 	}
+	
 
 	/**
 	 * Draws a random host from the destination range
@@ -244,7 +291,11 @@ public void DataSend(DTNHost host) {
   //ソースホストを被災地ノードに限定する
 		if(host.address>=this.Host){
 				Message m = new Message(host,randomHost(),"disaster"+host.address,getPingSize());
-				m.addProperty("DisasterCoord", host.location);;
+				m.addProperty("DisasterCoord", host.location);
+				
+		//回避ノード週の専用オブジェクト		
+				m.addProperty("AVOID", null);
+				
 				m.setAppID(APP_ID);
 		  
 		  
