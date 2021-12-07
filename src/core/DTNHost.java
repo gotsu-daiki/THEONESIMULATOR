@@ -35,6 +35,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	
 	//public MapNode AvoidanceNode;//避けるべきマップノード
 	public List<MapNode> AvoidanceNode=new ArrayList<>();
+	public List<List<MapNode>> RealAvoidanceNode=new ArrayList<>();
 	public boolean DateSendPermisstion=true;
 	public List<MapNode> PathNodeList=new ArrayList<>();  //被災者が現在進んでいるマップノードの列
 	public int PathCount=-1; //被災者がパスの何番目のマップノードまで進んだか確認する
@@ -42,6 +43,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public boolean MoveActive=true;
 	public boolean returning=false;
 	public MapNode BeforeMapNode;
+	public List<List<MapNode>> AvoidanceEdge=new ArrayList<>();  //ホストが持つ回避エッジ情報
 	
 	
 	private MessageRouter router;
@@ -370,6 +372,31 @@ public class DTNHost implements Comparable<DTNHost> {
 						return;
 					}
 			}
+		   
+		   //①自分のパスに災害地を含むエッジが含まれていたら
+		//if(host.AvoidanceNode.size()!=0&&host.returning==true) {
+		   if(host.returning==true) {
+				host.returning=false;
+				
+				if(this.address==63) {
+   					System.out.println(this.PathNodeList);
+   				}
+				
+				//if(Coord.PathContainsAvoidanceEdge(host.PathNodeList,host.AvoidanceEdge,host)) 
+				{
+					
+				//現在の目的地が回避ノードであれば１つ前のマップノードに引き返す
+					//if(Coord.containsIntlocation2(host.AvoidanceNode,host.destination))
+					if(PathCount>=1)
+						host.destination=PathNodeList.get(PathCount).location;
+				
+				//そうでなければ、そのまま目的地ノードまでレッツゴー
+					//else;
+					    host.BeforeMapNode.location=host.destination;
+				   }
+				//else;
+				
+			}
 			
       //destinationに向けてホストを少しずつ動かす
 			possibleMovement = timeIncrement * speed;
@@ -398,32 +425,18 @@ public class DTNHost implements Comparable<DTNHost> {
 				    			
 				    	//避けるマップノードが最終目的地なら災害地点を無視します。
 				    		if(!Coord.CompareEqual(host.LastMapNode,host.PathNodeList.get(PathCount+1).getLocation())) {
-				    			host.AvoidanceNode.add(host.PathNodeList.get(PathCount+1));//目的地としていたマップノードを回避ノードに設定
+				    			
+				    			//host.AvoidanceNode.add(host.PathNodeList.get(PathCount+1));//災害地の後ろのマップノードを回避ノードに設定
+				    			//host.AvoidanceNode.add(host.PathNodeList.get(PathCount));//災害地の前マップノードを回避ノードに設定
 				    			host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
-				    			if(this.address==308) {
-				    					//System.out.println(this);
-				    				}
+				    			//System.out.println("ホスト側のあヴォイダンスノード"+host+host.AvoidanceNode);
 				    			DataManager.Manager2(host);//災害地に訪れたノードを記録
 				    			}
 				    	}
 			}
 			
 			
-			//①自分のパスに災害地が含まれていたら
-			if(host.DisasterPointlist.size()!=0&&host.returning==true) {
-				host.returning=false;
-				if(Coord.PathContainsAvoidanceNode(host.PathNodeList,host.DisasterPointlist,host)) {
-				
-				//現在の目的地が回避ノードであれば１つ前のマップノードに引き返す
-					if(Coord.containsIntlocation2(host.AvoidanceNode,host.destination))
-					host.destination=host.BeforeMapNode.location;
-				
-				//そうでなければ、そのまま目的地ノードまでレッツゴー
-					else;
-				   }
-				else;
-				
-			}
+			
 				
 				
 				
