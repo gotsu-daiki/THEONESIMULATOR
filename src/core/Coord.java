@@ -233,10 +233,10 @@ public static boolean containsIntlocation2(List<MapNode>list,Coord coord) {
  * @param Coord　coord
  * @return 　　含まれていればtrue,そうでなければfalse
  */
-public static Boolean PathContainsAvoidanceNode(List<MapNode>path,List<Coord>disaster,DTNHost host) {
+public static Boolean PathContainsDisasterNode(List<MapNode>path,List<Coord>avoidance,DTNHost host) {
 	int i,n;
 	n=path.size();
-	for(Coord COORD:disaster	) {
+	for(Coord COORD:avoidance) {
 		for(i=0;i+1<n;i++) {
 		 //disaster座標がパスのi番目とi+1番目の間にあるかどうか判断
 			if(path.get(i+1).location.getX()>path.get(i).location.getX()&&COORD.getX()>=path.get(i).location.getX()&&COORD.getX()<=path.get(i+1).location.getX()||path.get(i+1).location.getX()<path.get(i).location.getX()&&COORD.getX()<=path.get(i).location.getX()&&COORD.getX()>=path.get(i+1).location.getX()) {
@@ -258,7 +258,60 @@ return false;
 
 }
 
+/*public static Boolean PathContainsAvoidanceNode(List<MapNode>path,List<MapNode>avoidance,DTNHost host) {
+	int i,j,n,m;
+	n=path.size();
+	m=avoidance.size();
+	
+	
+		for(i=0;i+1<n;i++) {
+			if(avoidance.contains(path.get(i))) {
+				if(avoidance.contains(path.get(i+1))) {
+					host.RealAvoidanceNode.add(path.get(i+1));
+					return true;
+				}
+						
+						
+				else if(i!=0&&avoidance.contains(path.get(i-1))) {
+					host.RealAvoidanceNode.add(path.get(i-1));
+					return true;
+				}
+			}
+		}
+		
+		return false;
+		
+	}*/
 
 
+public static Boolean PathContainsAvoidanceEdge(List<MapNode>path,List<List<MapNode>>Edge,DTNHost host) {
+	int i,m;
 
+	m=Edge.size();
+	
+		for(i=0;i+1<m;i++) {
+			//for(j=0;J+1<n;i++)
+			{
+			//if(
+			//Edge.get(i));
+			//host.RealAvoidanceNode.add(Edge.get(i));
+			return true;
+		    }
+	
+}return false;
 }
+
+			
+		
+		
+		
+
+		
+	
+	
+}
+
+
+
+
+
