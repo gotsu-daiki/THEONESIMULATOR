@@ -77,6 +77,8 @@ public class DisasterPointMassage extends Application {
 	//private List<String> sharenode =new ArrayList<String>();
 	public List<MapNode> type2=new ArrayList<>();
 	public List<MapNode> AvoidanceNode1=new ArrayList<>();
+	
+	
 
 
 	//private double share;
@@ -151,6 +153,9 @@ public class DisasterPointMassage extends Application {
 	Coord type = (Coord)msg.getProperty("DisasterCoord");
     host.DisasterPointlist.add(type);
 	
+    
+    
+    
 	//メッセージの回避エッジリストをホストが所持する回避エッジリストに追加していく
 	List<List<MapNode>> list = (List<List<MapNode>>)msg.getProperty("AVOID");
     
@@ -164,37 +169,80 @@ public class DisasterPointMassage extends Application {
 	}
 	
    
-			
-	if(host.AvoidanceNode!=null&&host.AvoidanceNode.size()!=0)
-		System.out.println(host.AvoidanceNode);
+		
 	
 //災害地からデータを受け取った時messageにエッジ情報を乗せる
-	if(msg.path.get(msg.path.size()-2).address<500) {
+	if(msg.path.get(msg.path.size()-2).address>=500) {
 	
+		
 		if(host.PathCount>=0) {
 			
-		 //avoidanceNode1で１つのエッジ→マップノードのペアを作る
-			AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
-			AvoidanceNode1.add(host.PathNodeList.get(host.PathCount));
+		
+	
+		
+	//災害が分岐点に発生していた時
+				if(Coord.containsIntlocation(host.DisasterPointlist, host.PathNodeList.get(host.PathCount+1).location)) {
 			
-		//avoidanceNode2で避けるエッジを複数個所持できるようにする
-			host.AvoidanceEdge.add(AvoidanceNode1);
+			            
+			
+			//分岐点と関わる全てのノードとの回避エッジを作成
+					for(MapNode node : host.PathNodeList.get(host.PathCount+1).getNeighbors()) {
+						List<MapNode> AvoidanceNode2=new ArrayList<>();
+						//System.out.println(host.PathNodeList);
+				
+						System.out.println("パスカウント＋1マップノード"+host.PathNodeList.get(host.PathCount+1));
+						System.out.println("パスカウント＋1マップノードの隣接ノード数"+host.PathNodeList.get(host.PathCount+1).getNeighbors().size());
+						System.out.println("パスカウント＋1マップノードの隣接ノード"+host.PathNodeList.get(host.PathCount+1).getNeighbors());
+				
+						//avoidanceNode1で１つのエッジ→マップノードのペアを作る
+						AvoidanceNode2.add(host.PathNodeList.get(host.PathCount+1));
+						AvoidanceNode2.add(node);
+				
+						//avoidanceEdgeで避けるエッジを複数個所持できるようにする
+						host.AvoidanceEdge.add(AvoidanceNode2);
+						msg.updateProperty("AVOID", host.AvoidanceEdge);
+						
+						System.out.println(host.AvoidanceEdge);
+				
+					}
+				}
+				else
+				{
+					 //avoidanceNode1で１つのエッジ→マップノードのペアを作る
+					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount));
+					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
+				
+			//avoidanceNode2で避けるエッジを複数個所持できるようにする
+					host.AvoidanceEdge.add(AvoidanceNode1);
+					msg.updateProperty("AVOID", host.AvoidanceEdge);
+			
+					if(host.address==325)
+					System.out.println(host.AvoidanceEdge);
+				}
 		}
-	msg.updateProperty("AVOID", host.AvoidanceEdge);
-	
-	/*System.out.println(msg.path);
-	System.out.println(host.PathNodeList);
-	System.out.println("目的地"+host.destination);
-	System.out.println(type);
-	System.out.println("前マップノード"+host.PathNodeList.get(host.PathCount));*/
-	
+		
+		
+		
+		
+		
+		
+	//メッセージが持つ回避エッジ情報を更新
+	//msg.updateProperty("AVOID", host.AvoidanceEdge);
 	}
 	
+	
+	
+	
 
-	//被災者ノードから情報を受け取ったノードは自分のルートに回避ノードが存在するか確かめる
-		if(msg.path.get(msg.path.size()-2).address<500) {
+	
+	//	if(msg.path.get(msg.path.size()-2).address<500) {
+	//if(host.address==325) {
+	
+	
+	//被災者ノードから情報を受け取ったノードは自分のルートに回避ノードが存在するか確かめる	
 			host.returning=true;
-		}
+			//System.out.println(type);
+	//	}
 		//if(msg.path.get(msg.path.size()-1).address<)
 		
 	//どこからどんなデータを受け取ったか通知

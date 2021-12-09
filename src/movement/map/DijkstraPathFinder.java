@@ -112,6 +112,30 @@ public class DijkstraPathFinder {
 		return path;
 	}
 	
+	/**
+	 * Relaxes the neighbors of a node (updates the shortest distances).
+	 * @param node The node whose neighbors are relaxed
+	 */
+	private void relax(MapNode node) {
+		double nodeDist = distances.get(node);	//nodeまでの距離を出力
+		for (MapNode n : node.getNeighbors()) {
+			if (visited.contains(n)) {
+				continue; // 一度訪れたノードはスキップする
+			}
+			
+			if (okMapNodes != null && !n.isType(okMapNodes)) {
+				continue; // OKノードすなわち通ることのできないノードはスキップ
+			}
+			
+			// パスのソースノードからnノードのまでの距離
+			double nDist = nodeDist + getDistance(node, n);
+			
+			if (distances.get(n) > nDist) { // stored distance > found dist?　蓄積している距離より新しく見つけた距離のほうがみじかければ 
+				prevNodes.put(n, node);		//nノードの前のマップノードにnodeを引っ付ける
+				setDistance(n, nDist);
+			}
+		}
+	}
 	
 	public List<MapNode> getShortestPath(MapNode from, MapNode to,DTNHost host) {
 		List<MapNode> path = new LinkedList<MapNode>();
@@ -150,34 +174,15 @@ public class DijkstraPathFinder {
 		
 		return path;
 	}
-	/**
-	 * Relaxes the neighbors of a node (updates the shortest distances).
-	 * @param node The node whose neighbors are relaxed
-	 */
-	private void relax(MapNode node) {
-		double nodeDist = distances.get(node);	//nodeまでの距離を出力
-		for (MapNode n : node.getNeighbors()) {
-			if (visited.contains(n)) {
-				continue; // 一度訪れたノードはスキップする
-			}
-			
-			if (okMapNodes != null && !n.isType(okMapNodes)) {
-				continue; // OKノードすなわち通ることのできないノードはスキップ
-			}
-			
-			// パスのソースノードからnノードのまでの距離
-			double nDist = nodeDist + getDistance(node, n);
-			
-			if (distances.get(n) > nDist) { // stored distance > found dist?　蓄積している距離より新しく見つけた距離のほうがみじかければ 
-				prevNodes.put(n, node);		//nノードの前のマップノードにnodeを引っ付ける
-				setDistance(n, nDist);
-			}
-		}
-	}
+	
 	
 	private void relax(MapNode node,DTNHost host) {
 		double nodeDist = distances.get(node);	//nodeまでの距離を出力
+		double nDist = 0;
+		int m=host.AvoidanceEdge.size();
+		
 		for (MapNode n : node.getNeighbors()) {
+			nDist=0;
 			if (visited.contains(n)) {
 				continue; // 一度訪れたノードはスキップする
 			}
@@ -186,22 +191,23 @@ public class DijkstraPathFinder {
 				continue; // OKノードすなわち通ることのできないノードはスキップ
 			}
 			
+			for(int i=0;i+1<=m;i++) {
+					
+				if(host.AvoidanceEdge!=null&&host.AvoidanceEdge.size()!=0&&host.AvoidanceEdge.get(i).contains(node)&&host.AvoidanceEdge.get(i).contains(n)){//{
+					nDist =INFINITY;  
+					break;//setDistance(n,INFINITY);
+				}
+				
+			}
 			
-			
-			// パスのソースノードからnノードのまでの距離
-			double nDist = nodeDist + getDistance(node, n);
+			if(nDist==0)// パスのソースノードからnノードのまでの距離
+				nDist = nodeDist + getDistance(node, n);
 			
 			if (distances.get(n) > nDist) { // stored distance > found dist?　蓄積している距離より新しく見つけた距離のほうがみじかければ 
-	
-				
-				 if(host.AvoidanceNode!=null&&Coord.containsIntlocation2(host.AvoidanceNode,n.getLocation())){
-					    setDistance(n,INFINITY);
-			
-					    }	    
-			    else {	
+			      
 					 prevNodes.put(n, node);	//nノードの前のマップノードにnodeを引っ付ける
 					 setDistance(n, nDist);
-			   }
+			
 			}
 		}
 	}

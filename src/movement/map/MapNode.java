@@ -143,4 +143,15 @@ public class MapNode implements Comparable<MapNode> {
 		return this.getLocation().compareTo((o).getLocation());
 	}
 	
+	/**
+	 * マップのノードに隣接ノードが３つ以上あるか判断する
+	 * @param node マップノード
+	 * @return　３つ以上あればtrue,それいがいならfalse
+	 */
+	public static boolean MoreThan3Neigbor(MapNode node) {
+		if(node.getNeighbors().size()>=3)
+			return true;
+		return false;
+	}
+	
 }

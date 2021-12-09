@@ -179,6 +179,22 @@ public class Coord implements Cloneable, Comparable<Coord> {
 	}
 		return false;
 }
+	
+	/**
+	 * 座標a,bが整数部分が一致しているかを返すメソッド
+	 * @param a
+	 * @param b
+	 * @return aとｂのX,Y座標の整数部分を比較し、等しければtrue,そうでなければfalse
+	 */
+	public static boolean CompareIntEqualV2(Coord a,Coord b) {
+		
+		if((int)a.getX()==(int)(b.getX())||(int)a.getX()==(int)(b.getX()+0.3)||(int)a.getX()==((int)b.getX()-0.3)) {
+			if((int)a.getY()==(int)(b.getY())||(int)a.getY()==(int)(b.getY()+0.3)||(int)a.getY()==(int)(b.getY()-0.3)){
+				return true;
+			}
+	}
+		return false;
+	}
 
 	/**
 	 * 座標a,bが一致しているかを返すメソッド
@@ -197,8 +213,8 @@ public static boolean CompareEqual(Coord a,Coord b) {
 }
 
 /**
- * listの中にcoordがあるかどうか判別
- * @param Arraylist list
+ * Coord-listの中にcoordがあるかどうか判別
+ * @param list コードリスト
  * @param Coord　coord
  * @return 
  */
@@ -206,6 +222,23 @@ public static boolean containsIntlocation(List<Coord>list,Coord coord) {
 		int i=0;
 		for(Coord COORD:list) {
 			if(CompareIntEqual(COORD, coord)){
+				return true;
+			}
+		i++;
+		}	
+		return false;	
+	}
+
+/**
+ * MapNode-listの中にcoordがあるかどうか判別
+ * @param list MapNodeリスト
+ * @param Coord　coord
+ * @return 
+ */
+public static boolean containsIntlocationV2(List<MapNode>list,Coord coord) {
+		int i=0;
+		for(MapNode node:list) {
+			if(CompareIntEqual(node.location, coord)){
 				return true;
 			}
 		i++;
@@ -285,20 +318,33 @@ return false;
 
 
 public static Boolean PathContainsAvoidanceEdge(List<MapNode>path,List<List<MapNode>>Edge,DTNHost host) {
-	int i,m;
+	int i,j,n,m;
 
 	m=Edge.size();
+	n=path.size();
 	
-		for(i=0;i+1<m;i++) {
-			//for(j=0;J+1<n;i++)
-			{
-			//if(
-			//Edge.get(i));
-			//host.RealAvoidanceNode.add(Edge.get(i));
-			return true;
-		    }
-	
-}return false;
+		for(i=0;i+1<n;i++) {
+			for(j=0;j+1<=m;j++){
+				
+				if(Edge.get(j).contains(path.get(i)))
+					if(Edge.get(j).contains(path.get(i+1))) 
+						return true;	
+				}	
+			}
+		return false;
+}
+
+public static Boolean AboveAvoidanceEdge(List<List<MapNode>>Edge,DTNHost host) {
+	int j,m;
+
+	m=Edge.size();
+
+			for(j=0;j+1<=m;j++){
+				if(Edge.get(j).contains(host.BeforeMapNode)&&Edge.get(j).contains(host.PathNodeList.get(host.PathCount))){
+						return true;	
+				}	
+			}
+		return false;
 }
 
 			
