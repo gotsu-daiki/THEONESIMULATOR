@@ -195,7 +195,7 @@ public class DijkstraPathFinder {
 					
 				if(host.AvoidanceEdge!=null&&host.AvoidanceEdge.size()!=0&&host.AvoidanceEdge.get(i).contains(node)&&host.AvoidanceEdge.get(i).contains(n)){//{
 					nDist =INFINITY;  
-					break;//setDistance(n,INFINITY);
+					//setDistance(n,INFINITY);
 				}
 				
 			}

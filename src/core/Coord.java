@@ -181,15 +181,31 @@ public class Coord implements Cloneable, Comparable<Coord> {
 }
 	
 	/**
-	 * 座標a,bが整数部分が一致しているかを返すメソッド
+	 * 座標a,bが整数部分が一致しているかを返すメソッド誤差１
 	 * @param a
 	 * @param b
 	 * @return aとｂのX,Y座標の整数部分を比較し、等しければtrue,そうでなければfalse
 	 */
 	public static boolean CompareIntEqualV2(Coord a,Coord b) {
 		
-		if((int)a.getX()==(int)(b.getX())||(int)a.getX()==(int)(b.getX()+0.3)||(int)a.getX()==((int)b.getX()-0.3)) {
-			if((int)a.getY()==(int)(b.getY())||(int)a.getY()==(int)(b.getY()+0.3)||(int)a.getY()==(int)(b.getY()-0.3)){
+		if((int)a.getX()==(int)(b.getX())||(int)a.getX()==(int)(b.getX()+1)||(int)a.getX()==((int)b.getX()-1)) {
+			if((int)a.getY()==(int)(b.getY())||(int)a.getY()==(int)(b.getY()+1)||(int)a.getY()==(int)(b.getY()-1)){
+				return true;
+			}
+	}
+		return false;
+	}
+	
+	/**
+	 * 座標a,bが整数部分が一致しているかを返すメソッド誤差１
+	 * @param a
+	 * @param b
+	 * @return aとｂのX,Y座標の整数部分を比較し、等しければtrue,そうでなければfalse
+	 */
+	public static boolean CompareIntEqualV3(Coord a,Coord b) {
+		
+		if((int)a.getX()==(int)(b.getX())||(int)a.getX()==(int)(b.getX()+0.4)) {
+			if((int)a.getY()==(int)(b.getY())||(int)a.getY()==(int)(b.getY()+0.4)){
 				return true;
 			}
 	}
@@ -339,8 +355,12 @@ public static Boolean AboveAvoidanceEdge(List<List<MapNode>>Edge,DTNHost host) {
 
 	m=Edge.size();
 
+
+	
 			for(j=0;j+1<=m;j++){
-				if(Edge.get(j).contains(host.BeforeMapNode)&&Edge.get(j).contains(host.PathNodeList.get(host.PathCount))){
+				if(Edge.get(j).contains
+						(host.PathNodeList.get(host.PathCount))&&
+						Edge.get(j).contains(host.PathNodeList.get(host.PathCount+1))){
 						return true;	
 				}	
 			}

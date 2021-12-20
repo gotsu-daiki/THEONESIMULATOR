@@ -64,7 +64,7 @@ public class DisasterPointMassage extends Application {
 
 	// Private vars
 	private double	lastPing = 0;
-	private double	interval = 10;
+	private double	interval = 1;
 	private boolean passive = false;
 	private int		seed = 9;
 	private int		destMin=0;
@@ -76,7 +76,7 @@ public class DisasterPointMassage extends Application {
 	private int i=0;
 	//private List<String> sharenode =new ArrayList<String>();
 	public List<MapNode> type2=new ArrayList<>();
-	public List<MapNode> AvoidanceNode1=new ArrayList<>();
+	
 	
 	
 
@@ -173,6 +173,9 @@ public class DisasterPointMassage extends Application {
 	
 //災害地からデータを受け取った時messageにエッジ情報を乗せる
 	if(msg.path.get(msg.path.size()-2).address>=500) {
+		
+		List<MapNode> AvoidanceNode1=new ArrayList<>();
+		List<MapNode> AvoidanceNode2=new ArrayList<>();
 	
 		
 		if(host.PathCount>=0) {
@@ -181,18 +184,25 @@ public class DisasterPointMassage extends Application {
 	
 		
 	//災害が分岐点に発生していた時
+			if(host.PathNodeList.size()-host.PathCount>=2)
 				if(Coord.containsIntlocation(host.DisasterPointlist, host.PathNodeList.get(host.PathCount+1).location)) {
-			
-			            
-			
-			//分岐点と関わる全てのノードとの回避エッジを作成
+					
+					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
+					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+2));
+				
+			//avoidanceNode2で避けるエッジを複数個所持できるようにする22					
+					host.AvoidanceEdge.add(AvoidanceNode1);
+					msg.updateProperty("AVOID", host.AvoidanceEdge);
+					
+					
+			/*分岐点と関わる全てのノードとの回避エッジを作成
 					for(MapNode node : host.PathNodeList.get(host.PathCount+1).getNeighbors()) {
 						List<MapNode> AvoidanceNode2=new ArrayList<>();
 						//System.out.println(host.PathNodeList);
 				
-						System.out.println("パスカウント＋1マップノード"+host.PathNodeList.get(host.PathCount+1));
-						System.out.println("パスカウント＋1マップノードの隣接ノード数"+host.PathNodeList.get(host.PathCount+1).getNeighbors().size());
-						System.out.println("パスカウント＋1マップノードの隣接ノード"+host.PathNodeList.get(host.PathCount+1).getNeighbors());
+						//System.out.println("パスカウント＋1マップノード"+host.PathNodeList.get(host.PathCount+1));
+						//System.out.println("パスカウント＋1マップノードの隣接ノード数"+host.PathNodeList.get(host.PathCount+1).getNeighbors().size());
+						//System.out.println("パスカウント＋1マップノードの隣接ノード"+host.PathNodeList.get(host.PathCount+1).getNeighbors());
 				
 						//avoidanceNode1で１つのエッジ→マップノードのペアを作る
 						AvoidanceNode2.add(host.PathNodeList.get(host.PathCount+1));
@@ -202,32 +212,26 @@ public class DisasterPointMassage extends Application {
 						host.AvoidanceEdge.add(AvoidanceNode2);
 						msg.updateProperty("AVOID", host.AvoidanceEdge);
 						
-						System.out.println(host.AvoidanceEdge);
+						//System.out.println(host.AvoidanceEdge);
 				
-					}
+					}*/
 				}
-				else
-				{
+				else{
 					 //avoidanceNode1で１つのエッジ→マップノードのペアを作る
-					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount));
-					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
+					AvoidanceNode2.add(host.PathNodeList.get(host.PathCount));
+					AvoidanceNode2.add(host.PathNodeList.get(host.PathCount+1));
 				
 			//avoidanceNode2で避けるエッジを複数個所持できるようにする
-					host.AvoidanceEdge.add(AvoidanceNode1);
-					msg.updateProperty("AVOID", host.AvoidanceEdge);
+					host.AvoidanceEdge.add(AvoidanceNode2);
+					
 			
-					if(host.address==325)
-					System.out.println(host.AvoidanceEdge);
+					//if(host.address==325)
+					//System.out.println(host.AvoidanceEdge);
 				}
 		}
-		
-		
-		
-		
-		
-		
+			
 	//メッセージが持つ回避エッジ情報を更新
-	//msg.updateProperty("AVOID", host.AvoidanceEdge);
+	msg.updateProperty("AVOID", host.AvoidanceEdge);
 	}
 	
 	
@@ -323,13 +327,14 @@ public class DisasterPointMassage extends Application {
 			this.lastPing = curTime;*/
 		 
 			if (curTime - this.lastPing >= this.interval&&host.DateSendPermisstion==true) {
-					//データを送信準備のメソッド
+					host.DateSendPermisstion=false;
+				//データを送信準備のメソッド
 					this.DataSend(host);
 
 				// リスナに知らせる
 				super.sendEventToListeners("SentPing", null, host);
 				this.lastPing = curTime;
-				host.DateSendPermisstion=false;
+				
 		}
 	}
 
@@ -337,8 +342,8 @@ public class DisasterPointMassage extends Application {
 public void DataSend(DTNHost host) {
 
   //ソースホストを被災地ノードに限定する
-		if(host.address>=this.Host){
-				Message m = new Message(host,randomHost(),"disaster"+host.address,getPingSize());
+		if(host.address>=DisasterPointMassage.Host){
+				Message m = new Message(host,randomHost(),"disaster"+host.address/*+SimClock.getTime()*/,getPingSize());
 				m.addProperty("DisasterCoord", host.location);
 				
 		//回避ノード週の専用オブジェクト		

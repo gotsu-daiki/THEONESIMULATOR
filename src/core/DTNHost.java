@@ -1,4 +1,5 @@
 /*
+ /*
  * Copyright 2010 Aalto University, ComNet
  * Released under GPLv3. See LICENSE.txt for details.
  */
@@ -19,6 +20,7 @@ import javax.net.ssl.HostnameVerifier;
 import movement.map.SimMap;
 import movement.MapBasedMovement;
 import core.SimClock;
+import gui.DTNSimGUI;
 /**
  * A DTN capable host.
  */
@@ -28,25 +30,24 @@ public class DTNHost implements Comparable<DTNHost> {
 //変更済み　private→public　
 	public Coord location; 	// ホストの現在地
 	public Coord destination;	// 現在目指しているマップノードの座標（中継地点）
-	public Coord LastMapNode;  //ホストの最終目的地点
-	//public Coord Beforedestination;//最後に通った分岐点
- 	public List<Coord> DisasterPointlist=new ArrayList<Coord>();//ホストが持っている被災地の位置情報
-	//public Coord DisasterPoint; //ホストが既知の災害地点座標
+	public Coord LastMapNode;  //ホストの最終目的地
 	
-	//public MapNode AvoidanceNode;//避けるべきマップノード
-	public List<MapNode> AvoidanceNode=new ArrayList<>();
-	public List<List<MapNode>> RealAvoidanceNode=new ArrayList<>();
+	public MapNode BeforeMapNode;//最後に訪れたマップノード
+	public MapNode AnotherPathStartNode;//パス再計算時に向かう最寄りのマップノード
+	
+	public int PathCount=-1; //被災者が自身のパスの何番目のマップノードまで進んだか確認する
+	
+ 	public List<Coord> DisasterPointlist=new ArrayList<Coord>();//ホストが持っている被災地の位置情報	
+	public List<MapNode> AvoidanceNode=new ArrayList<>(); 
+	public List<MapNode> PathNodeList=new ArrayList<>();//ホストのパス	
+	public List<List<MapNode>> AvoidanceEdge=new ArrayList<>();  //ホストが持つ災害発生エッジ情報
+	
 	public boolean DateSendPermisstion=true;
-	public List<MapNode> PathNodeList=new ArrayList<>();  //被災者が現在進んでいるマップノードの列
-	public int PathCount=-1; //被災者がパスの何番目のマップノードまで進んだか確認する
-	//public boolean ReachBeforeBranch=false;
 	public boolean MoveActive=true;
 	public boolean returning=false;
 	public boolean returning2=false;
 	public boolean returning3=false;
 	
-	public MapNode BeforeMapNode;
-	public List<List<MapNode>> AvoidanceEdge=new ArrayList<>();  //ホストが持つ回避エッジ情報
 	
 	
 	private MessageRouter router;
@@ -60,6 +61,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	private List<MovementListener> movListeners;
 	private List<NetworkInterface> net;
 	private ModuleCommunicationBus comBus;
+	private boolean koritu;
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
@@ -367,49 +369,60 @@ public class DTNHost implements Comparable<DTNHost> {
 			return;
 		}
 		
+
 		
 		
 		//初期位置から最終目的地点までのパスを設定
-		   if(this.destination == null&&host.returning3==false) {
+		   if(this.destination == null) {
 			  
-					if (!setNextWaypoint()) {
+					if (!setNextWaypoint(host)) {
 						return;
 					}
 			}
-			
 		   
+		 //初期位置から最終目的地点までのパスを設定
+		   if(this.koritu == true) {
+			   
+			   if (setAnotherNextWaypoint(host.PathNodeList.get(PathCount+1))) {
+				   host.location.setLocation(host.destination); 
+				   host.koritu=false;
+					return;
+				}
+			}
+			
+		  
 		
 		   if(host.returning==true) {
 			   
 				host.returning=false;
 				
-				if(this.PathCount>=0&&this.address==418) {
-					System.out.println("325が到着マップノードの隣接ノード数"+this.PathNodeList.get(PathCount).getNeighbors().size());
-					}
 				
-				//①自分のパスに災害地を含むエッジが含まれていたら
+				
+				//①自分のパスに災害発生エッジが含まれていたら→最寄りのマップノードに移動し、パスを再計算
 				if(Coord.PathContainsAvoidanceEdge(host.PathNodeList,host.AvoidanceEdge,host)) {
+					 if(this.address==489) {
+							System.out.println(this.PathNodeList);
+							System.out.println(this.location);
+							System.out.println(this.BeforeMapNode+""+this.PathNodeList.get(PathCount+1));
+							}
+						
+					if(PathCount>=1)
+					//既に災害発生エッジに足を踏み入れている→直前のマップノードに移動
+						if(Coord.AboveAvoidanceEdge(host.AvoidanceEdge,host)) { 
+							 
+								host.destination=host.PathNodeList.get(host.PathCount).location;
+						}
+						
+					//直後のマップノードに分岐点がなかったら→直前のマップノードに移動
+						else if(host.PathNodeList.get(host.PathCount+1).getNeighbors().size()<3) {						
+							if(PathCount>=0) 
+								host.destination=host.PathNodeList.get(host.PathCount).location;
+						}
+							  				
+					//直後のマップノードに分岐点がある→次のマップノードまで移動
+						else
+							host.returning2=true; //今目指している地点を前マップノードとみなす
 					
-					
-					
-				//現在の目的地が回避ノードであれば１つ前のマップノードに引き返す
-					if(Coord.AboveAvoidanceEdge(host.AvoidanceEdge,host)) {
-						if(PathCount>=1) 
-							host.destination=host.PathNodeList.get(host.PathCount).location;
-					}
-				//あとマップノードに分岐点がなければ引き返す
-					else if(host.PathNodeList.get(host.PathCount+1).getNeighbors().size()<3){
-							
-						if(PathCount>=0) 
-							host.destination=host.PathNodeList.get(host.PathCount).location;
-						    //System.out.println(host.BeforeMapNode);
-					}
-					//そうでなければ、そのまま目的地ノードまでレッツゴ
-					else
-						host.returning2=true; //今目指している地点を前マップノードとみなす
-					
-					host.returning3=true;
-				   
 					
 				}
 		   }
@@ -419,10 +432,11 @@ public class DTNHost implements Comparable<DTNHost> {
 		
 		 //②前マップノードに到着→災害地を避けてパス選択
 			if(host.returning2)
-				if(Coord.CompareIntEqual(host.destination, host.location)) {
-					
+				if(Coord.CompareIntEqualV3(host.destination, host.location)) {
+					 if(host.PathCount!=-1)
+					    DTNSimGUI.AllNodeDistance+=host.BeforeMapNode.location.distance(host.destination);
 						setAnotherNextWaypoint(host.PathNodeList.get(PathCount+1));//別ルートのNextwayPointを決める
-						host.returning3=false;
+
 				}
 			
 			
@@ -431,24 +445,25 @@ public class DTNHost implements Comparable<DTNHost> {
 				
 				//１つ前のマップノードに戻ったら
 				 if(Coord.CompareIntEqualV2(host.BeforeMapNode.location,host.location)){
-					 
-					
+					 if(host.PathCount!=-1)
+					    DTNSimGUI.AllNodeDistance+=host.PathNodeList.get(PathCount).location.distance(host.destination);
 						setAnotherNextWaypoint(host.BeforeMapNode);//別ルートのNextwayPointを決める
 						
 						}
-				 host.returning3=false;
 				}
 			
 			
+		
+			if(host.koritu==false) {
 				
-			
       //destinationに向けてホストを少しずつ動かす
 			possibleMovement = timeIncrement * speed;
 			distance = host.location.distance(host.destination);
+			
 			while (possibleMovement >= distance) {
 				host.location.setLocation(host.destination); // snap to destination
 				possibleMovement -= distance;
-				if (!setNextWaypoint()) { // get a new waypoint
+				if (!setNextWaypoint(host)) { // get a new waypoint
 					return; // no more waypoints left
 				}
 				distance = host.location.distance(host.destination);
@@ -460,35 +475,17 @@ public class DTNHost implements Comparable<DTNHost> {
 					host.location.getY());
 			host.location.translate(dx, dy);
 			
-			
-			
-			
-			/*①災害地に到着したなら戻る必要がある
-			if(host.DisasterPointlist!=null&&host.BeforeMapNode!=null) {
-				    if((Coord.containsIntlocation(DisasterPointlist, host.location))){
-				    			
-				    	//避けるマップノードが最終目的地なら災害地点を無視します。
-				    		if(!Coord.CompareEqual(host.LastMapNode,host.PathNodeList.get(PathCount+1).getLocation())) {
-				    			
-				    			//host.AvoidanceNode.add(host.PathNodeList.get(PathCount+1));//災害地の後ろのマップノードを回避ノードに設定
-				    			//host.AvoidanceNode.add(host.PathNodeList.get(PathCount));//災害地の前マップノードを回避ノードに設定
-				    			host.destination=host.BeforeMapNode.location;//前のマップノードを目的地点とする
-				    			//System.out.println("ホスト側のあヴォイダンスノード"+host+host.AvoidanceNode);
-				    			DataManager.Manager2(host);//災害地に訪れたノードを記録
-				    			}
-				    	}
-			}*/
-			
-			
-			
+			}
 				
 				
 
 			
 		//最終目的地点についた被災者は停止
 			if(host.LastMapNode!=null) {
-				if(Coord.CompareIntEqual(host.location,host.LastMapNode)) 
-					 host.MoveActive=false;				
+				if(Coord.CompareIntEqual(host.location,host.LastMapNode)) {					
+				   DataManager.ReachManagement(host);
+					host.MoveActive=false;	
+				}
 			}
 	}
 	/**
@@ -497,61 +494,85 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @return True if there was a next waypoint to set, false if node still
 	 * should wait
 	 */
-	private boolean setNextWaypoint() {
+	private boolean setNextWaypoint(DTNHost host) {
+		
 		if (path == null) {
 			path = movement.getPath();
-			this.PathNodeList=movement.getPathNodeList();
+			host.PathNodeList=movement.getPathNodeList();
 			//System.out.println(this.PathNodeList=movement.getPathNodeList());
 			
 		}
 		//System.out.println("パス"+path);
 		if (path == null || !path.hasNext()) {
-			this.nextTimeToMove = movement.nextPathAvailable();
-			this.path = null;
+			host.nextTimeToMove = movement.nextPathAvailable();
+			host.path = null;
 			return false;
 		}
 		//最後に通ったマップノードを保持する
-		if(this.destination!=null) {
+		if(host.destination!=null) {
 			//新しいマップノードに到着したら、最後に通ったマップノードを更新する
-			if(Coord.CompareEqual(this.location,this.destination)) {
+			if(Coord.CompareIntEqual(host.location,host.destination)) {
 				
-			     this.PathCount++;
-			     this.BeforeMapNode=this.PathNodeList.get(PathCount);
+				 if(host.PathCount!=-1)
+				  DTNSimGUI.AllNodeDistance+=host.PathNodeList.get(PathCount).location.distance(host.destination);
+			     host.PathCount++;
+			     host.BeforeMapNode=host.PathNodeList.get(PathCount);
+			     
+			    	 
+			     
 				   // System.out.println(this+"は分岐点"+this.destination+"に到着、前分岐点情報を更新"+this.Beforedestination);
 			//	 System.out.println(this+"のパスノードリスト"+this.PathNodeList.get(PathCount)+""+this.PathCount);
 			     }
 		}
+		
+		
 		 
-		this.destination = path.getNextWaypoint();
+		host.destination = path.getNextWaypoint();
 
-		if(this.PathCount>=0&&this.address==418) {
+		if(host.PathCount>=0&&host.address==418) {
 			System.out.println("325が到着マップノードの隣接ノード数"+this.PathNodeList.get(PathCount).getNeighbors().size());
 			}
-		this.speed = path.getSpeed();
+		host.speed = path.getSpeed();
 		//System.out.println("目的地"+this.destination);
-		if (this.movListeners != null) {
-			for (MovementListener l : this.movListeners) {
-				l.newDestination(this, this.destination, this.speed);
+		if (host.movListeners != null) {
+			for (MovementListener l : host.movListeners) {
+				l.newDestination(host, host.destination, host.speed);
 			}
 		}
 		return true;
 	}
+	
+	
+	
+	
+	
+	
+	
 	private boolean setAnotherNextWaypoint(MapNode BeforeMapNode){
 		path = movement.getPathAnotherRout(BeforeMapNode);
-		this.PathNodeList=movement.getAnotherPathNodeList(BeforeMapNode);
+		if(movement.getAnotherPathNodeList(BeforeMapNode).size()!=0)
+			this.PathNodeList=movement.getAnotherPathNodeList(BeforeMapNode);
 		//System.out.println(this+"   "+this.PathNodeList.size()+"   交わすノード"+this.AvoidanceNode);
 		//System.out.println(this.path.getCoords().size()==0);
 
-		this.PathCount=-1;
+		
 
 		//災害地を交わしたルートがない場合は停止
 		if(this.path.getCoords().size()==0) {
-			this.MoveActive=false;
-			return false;
-		}	
+			this.path=null;
+			this.koritu=true;
+			if(this.address==489) {
+				System.out.println(this.PathNodeList);
+				System.out.println(this.location);
+				System.out.println(this.BeforeMapNode+""+this.PathNodeList.get(PathCount+1));
+				}
+			
+			return true;
+			
+		}
+		this.PathCount=-1;
 		
 		this.destination = path.getNextWaypoint();
-		
 		this.speed = path.getSpeed();
          
 		if (this.movListeners != null) {

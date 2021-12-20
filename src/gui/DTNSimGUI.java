@@ -39,6 +39,8 @@ public class DTNSimGUI extends DTNSimUI {
 	private GUIControls guiControls;
 	private EventLogPanel eventLogPanel;
 	private InfoPanel infoPanel;
+	public static double AllNodeDistance;
+	
 	
 	//PingApplication a=new PingApplication(Setting s);
 	
@@ -139,7 +141,9 @@ public class DTNSimGUI extends DTNSimUI {
 	        }
 			
 			}
+			System.out.println(DTNSimGUI.AllNodeDistance);
 			this.update(false);
+			
 			
 			
 		}

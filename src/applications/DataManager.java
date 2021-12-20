@@ -21,7 +21,7 @@ public class DataManager {
 	
 	public static List<String> MsgHostData=new ArrayList<String>();//受信ホストリスト
 	public static List<String> HostData=new ArrayList<String>();//受信ホストリスト
-
+	public static int Numbers=0;
 	/**
 	 *各ノードが受信したメッセージを保管し、共有率を計算する。
 	 * 
@@ -59,6 +59,38 @@ public class DataManager {
 	   
 		return msg;
 		
+	}
+	
+	public static void ReachManagement(DTNHost host) {
+		//共有率
+		   if(!HostData.contains(host.toString())){
+			   HostData.add(host.toString());
+			  
+			   try {
+				   FileWriter fw = new FileWriter("result/Reach-Number.txt",true);
+				   
+						//テキストファイルに２列で表示するためにStringBufferを形成後に結合
+				   StringBuilder sb =new StringBuilder(String.valueOf(SimClock.getIntTime()));
+				   sb.append("     "+HostData.size());
+			
+			   			//Stringに変換し、書き込み
+				   fw.write(sb.toString());
+				   fw.write("\n");
+				   fw.close();
+				
+			   } catch (IOException e) {
+				   // TODO Auto-generated catch block
+				   e.printStackTrace();
+			   }
+			   
+			  
+		    
+		 
+		  // System.out.println("　共有率:"+share+"%");
+		   
+		
+			
+		}
 	}
 	
 	public static void Manager(DTNHost host) {
