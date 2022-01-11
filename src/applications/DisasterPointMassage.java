@@ -22,6 +22,7 @@ import core.SimClock;
 import core.SimScenario;
 import core.World;
 import movement.map.MapNode;
+import routing.MessageRouter;
 
 import java.util.List;
 import java.io.FileWriter;
@@ -61,6 +62,7 @@ public class DisasterPointMassage extends Application {
 
 	/** Application ID */
 	public static final String APP_ID = "gototest";
+	
 
 	// Private vars
 	private double	lastPing = 0;
@@ -148,15 +150,18 @@ public class DisasterPointMassage extends Application {
 	 */
 	@Override
 	public Message handle(Message msg, DTNHost host) {
-		
+	 
+	 
 	//受け取ったデータの中にある被災地の位置情報をホストは取得する
 	Coord type = (Coord)msg.getProperty("DisasterCoord");
     host.DisasterPointlist.add(type);
 	
     
     
-    
 	//メッセージの回避エッジリストをホストが所持する回避エッジリストに追加していく
+  // if(msg.path.get(msg.path.size()-2).address>=500) {
+    	
+    
 	List<List<MapNode>> list = (List<List<MapNode>>)msg.getProperty("AVOID");
     
 	if(list!=null) {
@@ -167,6 +172,7 @@ public class DisasterPointMassage extends Application {
 				host.AvoidanceEdge.add(list.get(i));
 		}			
 	}
+
 	
    
 		
@@ -190,12 +196,33 @@ public class DisasterPointMassage extends Application {
 					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
 					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+2));
 				
-			//avoidanceNode2で避けるエッジを複数個所持できるようにする22					
+			//avoidanceNode2で避けるエッジを複数個所持できるようにする2				
 					host.AvoidanceEdge.add(AvoidanceNode1);
 					msg.updateProperty("AVOID", host.AvoidanceEdge);
 					
 					
-			/*分岐点と関わる全てのノードとの回避エッジを作成
+			
+				}
+				else{
+				//avoidanceNode1で１つのエッジ→マップノードのペアを作る
+					AvoidanceNode2.add(host.PathNodeList.get(host.PathCount));
+					AvoidanceNode2.add(host.PathNodeList.get(host.PathCount+1));
+				
+				//avoidanceNode2で避けるエッジを複数個所持できるようにする
+					host.AvoidanceEdge.add(AvoidanceNode2);
+					
+			
+					//if(host.address==325)
+					//System.out.println(host.AvoidanceEdge);
+				}
+		}
+			
+	//メッセージが持つ回避エッジ情報を更新
+	msg.updateProperty("AVOID", host.AvoidanceEdge);
+	}
+	
+	
+	/*分岐点と関わる全てのノードとの回避エッジを作成
 					for(MapNode node : host.PathNodeList.get(host.PathCount+1).getNeighbors()) {
 						List<MapNode> AvoidanceNode2=new ArrayList<>();
 						//System.out.println(host.PathNodeList);
@@ -215,27 +242,6 @@ public class DisasterPointMassage extends Application {
 						//System.out.println(host.AvoidanceEdge);
 				
 					}*/
-				}
-				else{
-					 //avoidanceNode1で１つのエッジ→マップノードのペアを作る
-					AvoidanceNode2.add(host.PathNodeList.get(host.PathCount));
-					AvoidanceNode2.add(host.PathNodeList.get(host.PathCount+1));
-				
-			//avoidanceNode2で避けるエッジを複数個所持できるようにする
-					host.AvoidanceEdge.add(AvoidanceNode2);
-					
-			
-					//if(host.address==325)
-					//System.out.println(host.AvoidanceEdge);
-				}
-		}
-			
-	//メッセージが持つ回避エッジ情報を更新
-	msg.updateProperty("AVOID", host.AvoidanceEdge);
-	}
-	
-	
-	
 	
 
 	
@@ -327,7 +333,9 @@ public class DisasterPointMassage extends Application {
 			this.lastPing = curTime;*/
 		 
 			if (curTime - this.lastPing >= this.interval&&host.DateSendPermisstion==true) {
+				
 					host.DateSendPermisstion=false;
+				
 				//データを送信準備のメソッド
 					this.DataSend(host);
 
@@ -345,24 +353,29 @@ public void DataSend(DTNHost host) {
 		if(host.address>=DisasterPointMassage.Host){
 				Message m = new Message(host,randomHost(),"disaster"+host.address/*+SimClock.getTime()*/,getPingSize());
 				m.addProperty("DisasterCoord", host.location);
-				
 		//回避ノード週の専用オブジェクト		
 				m.addProperty("AVOID", null);
 				
-				m.setAppID(APP_ID);
-		  
+				m.setAppID(APP_ID);		  
 		  
 		//メッセージ送信
 				host.createNewMessage(m);
-		  
-		  
-       //  System.out.println(host+"はデータを"+m.getTo()+"あてに送りました。時間は:"+SimClock.getIntTime()+"秒"+
-			//	"　データの大きさ："+m.size+"kbytes");
 
 		  
 		//リスナに知らせる
 				super.sendEventToListeners("SentPing", null, host);
 
+		}
+		
+		//被災者ノードは自身の移動方向性ベクトル(始点と終点)を載せたメッセージを常に所持している
+		if(host.name.contains("p")) {
+			
+			//list<Coord> MovementVector={(host.location),(hpst.location)};
+			
+			Message m2 = new Message(host,randomHost(),"location"+host.address,getPingSize());
+			m2.addProperty("MovementVector",host.location);
+			m2.setTtl(0);//TTLを1秒もしくは1ホップに設定
+			host.createNewMessage(m2);
 		}
 
 	}
