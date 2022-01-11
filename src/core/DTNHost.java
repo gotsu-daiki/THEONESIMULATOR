@@ -28,10 +28,11 @@ public class DTNHost implements Comparable<DTNHost> {
 	private static int nextAddress = 0;
 	public int address;
 //変更済み　private→public　
+	
+	public Coord initiallocation;//=movement.getInitialLocation(); //ホストの初期位置
 	public Coord location; 	// ホストの現在地
 	public Coord destination;	// 現在目指しているマップノードの座標（中継地点）
 	public Coord LastMapNode;  //ホストの最終目的地
-	
 	public MapNode BeforeMapNode;//最後に訪れたマップノード
 	public MapNode AnotherPathStartNode;//パス再計算時に向かう最寄りのマップノード
 	
@@ -42,6 +43,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public List<MapNode> PathNodeList=new ArrayList<>();//ホストのパス	
 	public List<List<MapNode>> AvoidanceEdge=new ArrayList<>();  //ホストが持つ災害発生エッジ情報
 	
+	public boolean initiallocationOK=true;
 	public boolean DateSendPermisstion=true;
 	public boolean MoveActive=true;
 	public boolean returning=false;
@@ -52,6 +54,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	
 	private MessageRouter router;
 	private MovementModel movement;
+	
 	private Path path;
 	private double speed;
 	private double nextTimeToMove;
@@ -400,13 +403,11 @@ public class DTNHost implements Comparable<DTNHost> {
 				
 				//①自分のパスに災害発生エッジが含まれていたら→最寄りのマップノードに移動し、パスを再計算
 				if(Coord.PathContainsAvoidanceEdge(host.PathNodeList,host.AvoidanceEdge,host)) {
-					 if(this.address==489) {
-							System.out.println(this.PathNodeList);
-							System.out.println(this.location);
-							System.out.println(this.BeforeMapNode+""+this.PathNodeList.get(PathCount+1));
-							}
+					 
+					
+					if(PathCount>=0)
 						
-					if(PathCount>=1)
+						
 					//既に災害発生エッジに足を踏み入れている→直前のマップノードに移動
 						if(Coord.AboveAvoidanceEdge(host.AvoidanceEdge,host)) { 
 							 
@@ -501,6 +502,11 @@ public class DTNHost implements Comparable<DTNHost> {
 			host.PathNodeList=movement.getPathNodeList();
 			//System.out.println(this.PathNodeList=movement.getPathNodeList());
 			
+			//パスの第一マップノードを初期位置として登録
+			if(host.PathNodeList!=null)
+			host.initiallocation=host.PathNodeList.get(0).location;
+			
+		
 		}
 		//System.out.println("パス"+path);
 		if (path == null || !path.hasNext()) {
