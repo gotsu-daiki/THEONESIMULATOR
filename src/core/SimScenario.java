@@ -340,9 +340,14 @@ public class SimScenario implements Serializable {
 			for (int j=1;j<=nrofInterfaces;j++) {
 				String intName = s.getSetting(INTERFACENAME_S + j);
 				Settings intSettings = new Settings(intName); 
+				
+				//この部分でインターフェースの詳細を決定する
 				NetworkInterface iface = 
 					(NetworkInterface)intSettings.createIntializedObject(
-							INTTYPE_PACKAGE +intSettings.getSetting(INTTYPE_S));
+							INTTYPE_PACKAGE +
+							intSettings.getSetting(INTTYPE_S));
+				System.out.println(INTTYPE_PACKAGE);
+				System.out.println(INTTYPE_PACKAGE+intSettings.getSetting(INTTYPE_S));
 				iface.setClisteners(connectionListeners);
 				iface.setGroupSettings(s);
 				interfaces.add(iface);
