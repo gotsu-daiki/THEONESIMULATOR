@@ -36,6 +36,7 @@ public class NodeGraphic extends PlayFieldGraphic {
 	private static Color msgColor1 = Color.BLUE;
 	private static Color msgColor2 = Color.BLUE;
 	private static Color msgColor3 = Color.RED;
+	private static Color msgColor4 = Color.BLACK;
 	
 	private static Color highlightedNodeColor = Color.MAGENTA;
 
@@ -55,9 +56,9 @@ public class NodeGraphic extends PlayFieldGraphic {
 	
 	public void draw2(Graphics2D g2) {
 		drawHost2(g2);
-		/*if (drawBuffer) {
+		if (drawBuffer) {
 			drawMessages(g2);
-		}*/
+		}
 	}
 
 	/**
