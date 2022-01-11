@@ -1,0 +1,8 @@
+reset
+set key left top
+set title "避難所到着ノード数の推移" font "Arial,20"
+set xlabel "シミュレーション時間の経過[s]" font "Arial,18"
+set ylabel "避難所到着ノード数[人]" font "Arial,18"
+plot "NO-DTN.txt" with linespoints pointtype 7,\
+     "USE-DTN.txt" with linespoints pointtype 7,\
+     "DISTANCE.txt" using 0:($2+.1):(sprintf("%3d",$2)) with labels notitle font "Arial,20"
