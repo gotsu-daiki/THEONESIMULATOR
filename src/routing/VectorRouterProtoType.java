@@ -77,12 +77,16 @@ public class VectorRouterProtoType extends ActiveRouter {
 			if (othRouter.isTransferring()) 
 				continue; 
 			
+			//ホストの保持メッセージでTTLが0以下のものは削除→ふつうにめっせーじるーたーのTTLCHECKあるかた必要ないかもしれへん
+			//dropExpiredMessages();
 			
 			for (Message m : msgCollection) {
 				// 通信相手がメッセージmをすでに持っていたらこのmをスキップする
 				if (othRouter.hasMessage(m.getId())) {
 					continue; 
 				}
+				
+				System.out.println(m.getId()+"    "+m.getTtl());
 				//災害地からは無条件で転送			
 				if(host.name.contains("d-")) {
 					messages.add(new Tuple<Message, Connection>(m,con));
@@ -91,16 +95,29 @@ public class VectorRouterProtoType extends ActiveRouter {
 				if(m.getId().contains("location"+host.address)&&!other.name.contains("d-")) {
 					messages.add(new Tuple<Message, Connection>(m,con));
 				}
-				//通信相手が被災者&自分が災害地情報を転送するかどうか
-				if(other.name.contains("p")&&other.initiallocation!=null&&m.getId().contains("disaster")) {	
+				
+				//通信相手が被災者&自分が災害地情報を転送する?
+				if(other.name.contains("p")&&other.StartPoint!=null&&m.getId().contains("disaster")) {	
 					
-						//mの災害地方向性と接続先の移動方向性が一致すれば、messagesにmを加える
-						if(VectorComParator(DisasterVector(getHost(),m),MovementVector(other))){
-							messages.add(new Tuple<Message, Connection>(m,con));
-							}
-				}		
-			}			
-		}
+					if(VectorComParator(DisasterVector(host,m),MovementVector(other)))
+						messages.add(new Tuple<Message, Connection>(m,con));
+						
+					/*if(host.getRouter().messages.get("location"+other.address)!=null) {
+						
+						//自分のメッセージリストから相手の位置情報を取り出す
+						Message msg=host.getRouter().messages.get("location"+other.address);
+						List<Coord> MovementVectorlist = (List<Coord>)msg.getProperty("MovementVector");
+					
+						if(MovementVectorlist.get(0)!=null)
+						if(VectorComParator(DisasterVector(getHost(),m),MovementVector2(MovementVectorlist))){
+							//mの災害地方向性と接続先の移動方向性が一致すれば、messagesにmを加える→提案手法！！
+								messages.add(new Tuple<Message, Connection>(m,con));
+						}
+					}*/
+				}
+			}		
+		}			
+		
 		//転送するメッセージがなければnull
 		if (messages.size() == 0) {
 			return null;
@@ -120,7 +137,7 @@ public class VectorRouterProtoType extends ActiveRouter {
 	 * 災害地方向性と移動方向性を比較する
 	 * @param vecA
 	 * @param vecB
-	 * @return　移動方向性が災害地方向性の±5°以内ならtrue,そうでなければfalse
+	 * @return　移動方向性が災害地方向性の±22.5°以内ならtrue,そうでなければfalse
 	 */
 	protected boolean VectorComParator(double vecA,double vecB) {
 	
@@ -133,7 +150,7 @@ public class VectorRouterProtoType extends ActiveRouter {
 	
 	/**
 	 * メッセージの災害地方向性を算出する
-	 * @param host　
+	 * @param host ホスト　
 	 * @param m　災害地情報
 	 * @return 角度［°］
 	 */
@@ -149,7 +166,7 @@ public class VectorRouterProtoType extends ActiveRouter {
 	
 	/**
 	 * ホストの移動方向性を算出する
-	 * @param host　
+	 * @param host ホスト
 	 * @return 角度［°］
 	 */
 	protected double MovementVector(DTNHost host) {
@@ -158,10 +175,24 @@ public class VectorRouterProtoType extends ActiveRouter {
 				//y1=host.initiallocation.getY(),
 				//x1=host.PathNodeList.get(host.PathCount-1).location.getX(),
 				//y1=host.PathNodeList.get(host.PathCount-1).location.getY(),
-			double x1=host.initiallocation.getX(),
-					y1=host.initiallocation.getY(),
+			double x1=host.StartPoint.getX(),
+					y1=host.StartPoint.getY(),
 					x2=host.location.getX(),
 		 			y2=host.location.getY();
+						
+		return Math.toDegrees(Math.atan((y2-y1)/(x2-x1)));
+	}
+	/**
+	 * ホストの移動方向性を算出する
+	 * @param host ホスト
+	 * @return 角度［°］
+	 */
+	protected double MovementVector2(List<Coord> list) {
+		
+			double x1=list.get(0).getX(),
+					y1=list.get(0).getY(),
+					x2=list.get(1).getX(),
+		 			y2=list.get(1).getY();
 						
 		return Math.toDegrees(Math.atan((y2-y1)/(x2-x1)));
 	}
