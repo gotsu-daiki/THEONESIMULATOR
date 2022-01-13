@@ -47,6 +47,8 @@ public class DisasterPointMassage extends Application {
 	public static final String PING_PASSIVE = "passive";
 	/** Ping generation interval */
 	public static final String PING_INTERVAL = "interval";
+	
+	public static final String VECTOR_INTERVAL="vevtorinterval";
 	/** Ping interval offset - avoids synchronization of ping sending */
 	public static final String PING_OFFSET = "offset";
 	/** Destination address range - inclusive lower, exclusive upper */
@@ -76,6 +78,7 @@ public class DisasterPointMassage extends Application {
 	public static int Host=1;
 	private Random	rng;
 	private int i=0;
+	public int vectorinterval=60;
 	//private List<String> sharenode =new ArrayList<String>();
 	public List<MapNode> type2=new ArrayList<>();
 	
@@ -118,6 +121,9 @@ public class DisasterPointMassage extends Application {
 		if (s.contains(NORFHOSTS)){
 			this.Host = s.getInt(NORFHOSTS);
 		}
+		if(s.contains(VECTOR_INTERVAL)) {
+			this.vectorinterval=s.getInt(VECTOR_INTERVAL);
+		}
 
 		rng = new Random(this.seed);
 		super.setAppID(APP_ID);
@@ -152,16 +158,20 @@ public class DisasterPointMassage extends Application {
 	public Message handle(Message msg, DTNHost host) {
 	 
 	 
+		if(msg.getId().contains("location"))
+			System.out.println(msg.getTtl());
 	//受け取ったデータの中にある被災地の位置情報をホストは取得する
 	Coord type = (Coord)msg.getProperty("DisasterCoord");
-    host.DisasterPointlist.add(type);
+  //  host.DisasterPointlist.add(type);
 	
     
     
+	if(msg.getId().contains("disaster508"))
+	{
+		System.out.println(host);
+	}
 	//メッセージの回避エッジリストをホストが所持する回避エッジリストに追加していく
   // if(msg.path.get(msg.path.size()-2).address>=500) {
-    	
-    
 	List<List<MapNode>> list = (List<List<MapNode>>)msg.getProperty("AVOID");
     
 	if(list!=null) {
@@ -178,27 +188,25 @@ public class DisasterPointMassage extends Application {
 		
 	
 //災害地からデータを受け取った時messageにエッジ情報を乗せる
-	if(msg.path.get(msg.path.size()-2).address>=500) {
+	if(msg.path.get(msg.path.size()-2).name.contains("d")) {
 		
 		List<MapNode> AvoidanceNode1=new ArrayList<>();
 		List<MapNode> AvoidanceNode2=new ArrayList<>();
 	
 		
 		if(host.PathCount>=0) {
-			
-		
-	
-		
-	//災害が分岐点に発生していた時
-			if(host.PathNodeList.size()-host.PathCount>=2)
-				if(Coord.containsIntlocation(host.DisasterPointlist, host.PathNodeList.get(host.PathCount+1).location)) {
+			//災害が分岐点に発生していた時
+			if(host.PathNodeList.size()-host.PathCount>=2) {
+				//if(Coord.containsIntlocation(host.DisasterPointlist, host.PathNodeList.get(host.PathCount+1).location)) {
 					
+					//AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
+					//AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+2));
+					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount));
 					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+1));
-					AvoidanceNode1.add(host.PathNodeList.get(host.PathCount+2));
 				
 			//avoidanceNode2で避けるエッジを複数個所持できるようにする2				
 					host.AvoidanceEdge.add(AvoidanceNode1);
-					msg.updateProperty("AVOID", host.AvoidanceEdge);
+					//msg.updateProperty("AVOID", host.AvoidanceEdge);
 					
 					
 			
@@ -222,60 +230,13 @@ public class DisasterPointMassage extends Application {
 	}
 	
 	
-	/*分岐点と関わる全てのノードとの回避エッジを作成
-					for(MapNode node : host.PathNodeList.get(host.PathCount+1).getNeighbors()) {
-						List<MapNode> AvoidanceNode2=new ArrayList<>();
-						//System.out.println(host.PathNodeList);
-				
-						//System.out.println("パスカウント＋1マップノード"+host.PathNodeList.get(host.PathCount+1));
-						//System.out.println("パスカウント＋1マップノードの隣接ノード数"+host.PathNodeList.get(host.PathCount+1).getNeighbors().size());
-						//System.out.println("パスカウント＋1マップノードの隣接ノード"+host.PathNodeList.get(host.PathCount+1).getNeighbors());
-				
-						//avoidanceNode1で１つのエッジ→マップノードのペアを作る
-						AvoidanceNode2.add(host.PathNodeList.get(host.PathCount+1));
-						AvoidanceNode2.add(node);
-				
-						//avoidanceEdgeで避けるエッジを複数個所持できるようにする
-						host.AvoidanceEdge.add(AvoidanceNode2);
-						msg.updateProperty("AVOID", host.AvoidanceEdge);
-						
-						//System.out.println(host.AvoidanceEdge);
-				
-					}*/
-	
-
-	
-	//	if(msg.path.get(msg.path.size()-2).address<500) {
-	//if(host.address==325) {
-	
 	
 	//被災者ノードから情報を受け取ったノードは自分のルートに回避ノードが存在するか確かめる	
 			host.returning=true;
-			//System.out.println(type);
-	//	}
-		//if(msg.path.get(msg.path.size()-1).address<)
-		
-	//どこからどんなデータを受け取ったか通知
-		//System.out.print("目的ノード:"+msg.getTo()+" 受信ノード:"+host+
-				// "  時間:"+SimClock.getIntTime());
 
-	   
-		
-		
 		if (type==null)
 				return msg; // Not a ping/pong message
-		
-		// Respond with pong if we're the recipient
-		//if (msg.getTo()==host && type.equalsIgnoreCase("disaster")) {
 
-			//String id = "pong" + SimClock.getIntTime() + "-" +
-			//	host.getAddress();
-			//Message m = new Message(host, msg.getFrom(), id, getPongSize());
-			//m.addProperty("type", "pong");
-
-		//	System.out.println(host+"は"+msg.getFrom()+"からgototestを受信。　 時間 :"+
-		//	+SimClock.getIntTime()+" データのサイズ :"+msg.size+
-			//"  スループット:"+(double)msg.size/(double)(SimClock.getIntTime()-interval)+"(kbps)");
 			
 		
 		
@@ -288,22 +249,6 @@ public class DisasterPointMassage extends Application {
 	 *
 	 * @return host
 	 */
-	/*private DTNHost randomHost() {
-		int destaddr = 0;
-		if (destMax == destMin) {
-			destaddr = destMin;
-		}
-		destaddr = destMin + rng.nextInt(destMax - destMin);
-		World w = SimScenario.getInstance().getWorld();
-
-		return w.getNodeByAddress(100);
-	}
-
-	@Override
-	public Application replicate() {
-		return new DisasterPointMassage(this);
-	}*/
-	
 	private DTNHost randomHost() {
 		World w = SimScenario.getInstance().getWorld();
 		return w.getNodeByAddress(100);
@@ -324,58 +269,57 @@ public class DisasterPointMassage extends Application {
 		if (this.passive) return;
 
 		 double curTime = SimClock.getTime();
-		/*if (curTime - this.lastPing >= this.interval) {
-				//データを送信準備のメソッド
-				this.DataSend(host);
-
-			// リスナに知らせる
-			super.sendEventToListeners("SentPing", null, host);
-			this.lastPing = curTime;*/
+		
 		 
-			if (curTime - this.lastPing >= this.interval&&host.DateSendPermisstion==true) {
+			if(host.DateSendPermisstion==true||curTime - this.lastPing >= this.vectorinterval&&host.name.contains("p")) {
 				
-					host.DateSendPermisstion=false;
+				host.DateSendPermisstion=false;
 				
 				//データを送信準備のメソッド
 					this.DataSend(host);
 
 				// リスナに知らせる
 				super.sendEventToListeners("SentPing", null, host);
-				this.lastPing = curTime;
+				//メッセージを最後に送った時間
 				
+				if(host.name.contains("p"))
+				 this.lastPing = curTime;
+
 		}
 	}
 
 	
 public void DataSend(DTNHost host) {
 
-  //ソースホストを被災地ノードに限定する
-		if(host.address>=DisasterPointMassage.Host){
+  //災害地が送るメッセージ
+		if(host.name.contains("d")){
 				Message m = new Message(host,randomHost(),"disaster"+host.address/*+SimClock.getTime()*/,getPingSize());
 				m.addProperty("DisasterCoord", host.location);
-		//回避ノード週の専用オブジェクト		
+		//回避エッジ専用オブジェクト		
 				m.addProperty("AVOID", null);
-				
-				m.setAppID(APP_ID);		  
-		  
+				m.setAppID(APP_ID);
+				m.setTtl(100);
 		//メッセージ送信
 				host.createNewMessage(m);
-
-		  
 		//リスナに知らせる
-				super.sendEventToListeners("SentPing", null, host);
+				super.sendEventToListeners("Disaster", null, host);
 
 		}
 		
-		//被災者ノードは自身の移動方向性ベクトル(始点と終点)を載せたメッセージを常に所持している
+	//被災者が送るメッセージ：自身の移動方向性ベクトル(始点と終点)を載せたメッセージを常に所持している
 		if(host.name.contains("p")) {
 			
-			//list<Coord> MovementVector={(host.location),(hpst.location)};
+			List<Coord> MovementVector=new ArrayList<>();
+			MovementVector.add(host.StartPoint);
+			MovementVector.add(host.location);
 			
 			Message m2 = new Message(host,randomHost(),"location"+host.address,getPingSize());
-			m2.addProperty("MovementVector",host.location);
+			m2.addProperty("MovementVector",MovementVector);
 			m2.setTtl(0);//TTLを1秒もしくは1ホップに設定
+			m2.setAppID(APP_ID);
 			host.createNewMessage(m2);
+			
+			super.sendEventToListeners("location", null, host);
 		}
 
 	}
