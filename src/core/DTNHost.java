@@ -29,7 +29,8 @@ public class DTNHost implements Comparable<DTNHost> {
 	public int address;
 //変更済み　private→public　
 	
-	public Coord initiallocation;//=movement.getInitialLocation(); //ホストの初期位置
+	public Coord StartPoint;//=movement.getInitialLocation(); //ホストの初期位置
+	
 	public Coord location; 	// ホストの現在地
 	public Coord destination;	// 現在目指しているマップノードの座標（中継地点）
 	public Coord LastMapNode;  //ホストの最終目的地
@@ -42,6 +43,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	public List<MapNode> AvoidanceNode=new ArrayList<>(); 
 	public List<MapNode> PathNodeList=new ArrayList<>();//ホストのパス	
 	public List<List<MapNode>> AvoidanceEdge=new ArrayList<>();  //ホストが持つ災害発生エッジ情報
+	public List<Coord> Vectorlocation=new ArrayList<>(); //移動方向性を求めるためにメッセージに乗せる位置情報
 	
 	public boolean initiallocationOK=true;
 	public boolean DateSendPermisstion=true;
@@ -502,9 +504,6 @@ public class DTNHost implements Comparable<DTNHost> {
 			host.PathNodeList=movement.getPathNodeList();
 			//System.out.println(this.PathNodeList=movement.getPathNodeList());
 			
-			//パスの第一マップノードを初期位置として登録
-			if(host.PathNodeList!=null)
-			host.initiallocation=host.PathNodeList.get(0).location;
 			
 		
 		}
@@ -531,8 +530,15 @@ public class DTNHost implements Comparable<DTNHost> {
 			     }
 		}
 		
+		//パスの第一マップノードを初期位置として登録
+		if(host.PathNodeList!=null&&host.PathCount>=1)
+		host.StartPoint=host.PathNodeList.get(host.PathCount).location;
+		//しょきち 
+		else if(host.PathNodeList!=null)
+			host.StartPoint=host.PathNodeList.get(0).location;
 		
-		 
+		
+		
 		host.destination = path.getNextWaypoint();
 
 		if(host.PathCount>=0&&host.address==418) {
