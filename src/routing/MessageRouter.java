@@ -84,7 +84,11 @@ public abstract class MessageRouter {
 	/** The messages being transferred with msgID_hostName keys */
 	private HashMap<String, Message> incomingMessages;
 	/** The messages this router is carrying */
-	private HashMap<String, Message> messages; 
+	
+	
+	
+	
+	public HashMap<String, Message> messages; 
 	/** The messages this router has received as the final recipient */
 	private HashMap<String, Message> deliveredMessages;
 	/** The messages that Applications on this router have blacklisted */
@@ -110,6 +114,7 @@ public abstract class MessageRouter {
 	public MessageRouter(Settings s) {
 		this.bufferSize = Integer.MAX_VALUE; // defaults to rather large buffer	
 		this.msgTtl = Message.INFINITE_TTL;
+		//this.msgTtl = Message.initTtl;
 		this.applications = new HashMap<String, Collection<Application>>();
 		
 		if (s.contains(B_SIZE_S)) {

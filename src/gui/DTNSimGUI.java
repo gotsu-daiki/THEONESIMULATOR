@@ -141,7 +141,7 @@ public class DTNSimGUI extends DTNSimUI {
 	        }
 			
 			}
-			System.out.println(DTNSimGUI.AllNodeDistance);
+			//System.out.println(DTNSimGUI.AllNodeDistance);
 			this.update(false);
 			
 			

@@ -37,6 +37,7 @@ public class Message implements Comparable<Message> {
 	private double timeCreated;
 	/** Initial TTL of the message */
 	private int initTtl;
+	//public static int initTtl;
 	
 	public List<MapNode> MsgAvoidance=new ArrayList<>();
 	
