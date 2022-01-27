@@ -60,12 +60,16 @@ public class DataManager {
 		return msg;
 		
 	}
-	
+	/**
+	 * 最終目的地についたホストの名前をすべて出力する
+	 * @param host
+	 */
 	public static void ReachManagement(DTNHost host) {
 		//共有率
 		   if(!HostData.contains(host.toString())){
 			   HostData.add(host.toString());
-			  
+			   
+			 
 			   try {
 				   FileWriter fw = new FileWriter("result/Reach-Number.txt",true);
 				   
@@ -172,6 +176,21 @@ public class DataManager {
 			   file.delete();
 		   if(file2.exists())
 			   file2.delete();
+	}
+	public static void DisasterDateManager(List<Message> Disaster) {
+		 try {
+	    	   FileWriter fw = new FileWriter("result/AmoutOfDate.txt",true);   
+	    	   
+	    	   fw.write(Disaster.size());
+	    	   fw.write("\n");
+	    	   fw.close();	
+	    	  	
+		    
+	       }catch (IOException e) {
+			   // TODO Auto-generated catch block
+			   e.printStackTrace();
+		   }
+		
 	}
 	
 

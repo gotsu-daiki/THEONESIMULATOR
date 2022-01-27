@@ -19,7 +19,7 @@ import java.util.Random;
 import javax.net.ssl.HostnameVerifier;
 import movement.map.SimMap;
 import movement.MapBasedMovement;
-import core.SimClock;
+import core.DTNSim;
 import gui.DTNSimGUI;
 /**
  * A DTN capable host.
@@ -384,21 +384,11 @@ public class DTNHost implements Comparable<DTNHost> {
 						return;
 					}
 			}
-		   
-		 //初期位置から最終目的地点までのパスを設定
-		   if(this.koritu == true) {
-			   
-			   if (setAnotherNextWaypoint(host.PathNodeList.get(PathCount+1))) {
-				   host.location.setLocation(host.destination); 
-				   host.koritu=false;
-					return;
-				}
-			}
+	
 			
 		  
-		
-		   if(host.returning==true) {
-			   
+		//毎回計算するとおもいので災害地一個受け取るたびに一回計算する
+		   if(host.returning==true) {			   
 				host.returning=false;
 				
 				
@@ -406,6 +396,10 @@ public class DTNHost implements Comparable<DTNHost> {
 				//①自分のパスに災害発生エッジが含まれていたら→最寄りのマップノードに移動し、パスを再計算
 				if(Coord.PathContainsAvoidanceEdge(host.PathNodeList,host.AvoidanceEdge,host)) {
 					 
+					//この道は通れないと情報によって判別した回数
+					DTNSim.AvoidanceTimes++;
+					int a=DTNSim.AvoidanceTimes-DTNSim.ReachDisasterList.size();
+					System.out.println("災害地回避に役立った回数　:  "+a);
 					
 					if(PathCount>=0)
 						
@@ -439,7 +433,10 @@ public class DTNHost implements Comparable<DTNHost> {
 					 if(host.PathCount!=-1)
 					    DTNSimGUI.AllNodeDistance+=host.BeforeMapNode.location.distance(host.destination);
 						setAnotherNextWaypoint(host.PathNodeList.get(PathCount+1));//別ルートのNextwayPointを決める
-
+                        
+						
+						if(host.path==null)
+							return;
 				}
 			
 			
@@ -452,6 +449,9 @@ public class DTNHost implements Comparable<DTNHost> {
 					    DTNSimGUI.AllNodeDistance+=host.PathNodeList.get(PathCount).location.distance(host.destination);
 						setAnotherNextWaypoint(host.BeforeMapNode);//別ルートのNextwayPointを決める
 						
+						
+						if(host.path==null)
+							return;
 						}
 				}
 			
@@ -488,6 +488,9 @@ public class DTNHost implements Comparable<DTNHost> {
 				if(Coord.CompareIntEqual(host.location,host.LastMapNode)) {					
 				   DataManager.ReachManagement(host);
 					host.MoveActive=false;	
+					DTNSim.finalreach++;
+				System.out.println(SimClock.getIntTime()+"に"+(double)DTNSim.finalreach/500+"割の被災者が避難所に到着");
+
 				}
 			}
 	}
@@ -540,10 +543,6 @@ public class DTNHost implements Comparable<DTNHost> {
 		
 		
 		host.destination = path.getNextWaypoint();
-
-		if(host.PathCount>=0&&host.address==418) {
-			System.out.println("325が到着マップノードの隣接ノード数"+this.PathNodeList.get(PathCount).getNeighbors().size());
-			}
 		host.speed = path.getSpeed();
 		//System.out.println("目的地"+this.destination);
 		if (host.movListeners != null) {
@@ -571,17 +570,10 @@ public class DTNHost implements Comparable<DTNHost> {
 
 		//災害地を交わしたルートがない場合は停止
 		if(this.path.getCoords().size()==0) {
-			this.path=null;
-			this.koritu=true;
-			if(this.address==489) {
-				System.out.println(this.PathNodeList);
-				System.out.println(this.location);
-				System.out.println(this.BeforeMapNode+""+this.PathNodeList.get(PathCount+1));
-				}
-			
+			this.AvoidanceEdge.clear();
 			return true;
-			
 		}
+		
 		this.PathCount=-1;
 		
 		this.destination = path.getNextWaypoint();

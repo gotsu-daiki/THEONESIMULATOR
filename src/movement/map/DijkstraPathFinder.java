@@ -14,6 +14,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import core.Coord;
+import core.DTNSim;
 import core.DTNHost;
 
 /**
@@ -195,7 +196,8 @@ public class DijkstraPathFinder {
 					
 				if(host.AvoidanceEdge!=null&&host.AvoidanceEdge.size()!=0&&host.AvoidanceEdge.get(i).contains(node)&&host.AvoidanceEdge.get(i).contains(n)){//{
 					nDist =INFINITY;  
-					//setDistance(n,INFINITY);
+					
+				
 				}
 				
 			}

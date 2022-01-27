@@ -124,7 +124,7 @@ public class NodeGraphic2 extends PlayFieldGraphic {
 		if (drawNodeName) {
 			g2.setColor(hostNameColor2);
 			// Draw node's address next to it
-			g2.drawString(node.toString(), scale(loc.getX()),
+			//g2.drawString(node.toString(), scale(loc.getX()),
 					scale(loc.getY()));
 		}
 	}

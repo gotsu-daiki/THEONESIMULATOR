@@ -16,6 +16,7 @@ import report.PingAppReporter;
 import core.Application;
 import core.Coord;
 import core.DTNHost;
+import core.DTNSim;
 import core.Message;
 import core.Settings;
 import core.SimClock;
@@ -29,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import applications.DataManager;
 
 /**
  * Simple ping application to demonstrate the application support. The
@@ -79,6 +81,7 @@ public class DisasterPointMassage extends Application {
 	private Random	rng;
 	private int i=0;
 	public int vectorinterval=60;
+	//public List<Message> DisasterDateList=new ArrayList<>();
 	//private List<String> sharenode =new ArrayList<String>();
 	public List<MapNode> type2=new ArrayList<>();
 	
@@ -158,18 +161,23 @@ public class DisasterPointMassage extends Application {
 	public Message handle(Message msg, DTNHost host) {
 	 
 	 
-		if(msg.getId().contains("location"))
-			System.out.println(msg.getTtl());
+		if(msg.getId().contains("disaster")) {
+			DTNSim.DisasterDateList.add(msg);
+			int a=DTNSim.DisasterDateList.size()-DTNSim.ReachDisasterList.size();
+			System.out.println("災害地データ拡散数"+a);
+		}
+		
+		if(msg.path.get(msg.path.size()-2).name.contains("d")){
+		DTNSim.ReachDisasterList.add(host);
+		System.out.println("災害地到着ノード数"+DTNSim.ReachDisasterList.size());
+		}
+		
+		
 	//受け取ったデータの中にある被災地の位置情報をホストは取得する
 	Coord type = (Coord)msg.getProperty("DisasterCoord");
   //  host.DisasterPointlist.add(type);
 	
-    
-    
-	if(msg.getId().contains("disaster508"))
-	{
-		System.out.println(host);
-	}
+     
 	//メッセージの回避エッジリストをホストが所持する回避エッジリストに追加していく
   // if(msg.path.get(msg.path.size()-2).address>=500) {
 	List<List<MapNode>> list = (List<List<MapNode>>)msg.getProperty("AVOID");

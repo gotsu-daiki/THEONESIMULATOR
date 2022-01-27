@@ -96,7 +96,9 @@ public class NodeGraphic extends PlayFieldGraphic {
 				
 				// draw the "range" circle
 				g2.setColor(rangeColor);
-				g2.draw(coverage);
+				
+				//接続可能範囲を表示
+				//g2.draw(coverage);
 			}
 		}
 
@@ -123,7 +125,7 @@ public class NodeGraphic extends PlayFieldGraphic {
 		/* draw node rectangle */
 		g2.setColor(hostColor);	
 		g2.drawRect(scale(loc.getX()-1),scale(loc.getY()-1),
-		scale(2),scale(2));
+		scale(20),scale(20));
 
 		if (isHighlighted()) {
 			g2.setColor(highlightedNodeColor);
@@ -133,8 +135,8 @@ public class NodeGraphic extends PlayFieldGraphic {
 		if (drawNodeName) {
 			g2.setColor(hostNameColor);
 			// Draw node's address next to it
-			g2.drawString(node.toString(), scale(loc.getX()),
-					scale(loc.getY()));
+			//g2.drawString(node.toString(), scale(loc.getX()),
+				//	scale(loc.getY()));
 		}
 	}
 
@@ -203,8 +205,8 @@ public class NodeGraphic extends PlayFieldGraphic {
 		if (drawNodeName) {
 			g2.setColor(hostNameColor2);
 			// Draw node's address next to it
-			g2.drawString(node.toString(), scale(loc.getX()-20),
-					scale(loc.getY()-20));
+			//g2.drawString(node.toString(), scale(loc.getX()-20),
+				//	scale(loc.getY()-20));
 		}
 	}
 	/**

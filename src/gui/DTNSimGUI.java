@@ -141,7 +141,7 @@ public class DTNSimGUI extends DTNSimUI {
 	        }
 			
 			}
-			//System.out.println(DTNSimGUI.AllNodeDistance);
+			
 			this.update(false);
 			
 			
@@ -154,8 +154,14 @@ public class DTNSimGUI extends DTNSimUI {
 		this.update(true); // force final GUI update
 		
 		if (!simCancelled) { // NOT cancelled -> leave the GUI running
+				//シミュレーションが終わったら、総避難距離を表示
+			System.out.println(DTNSimGUI.AllNodeDistance);
+			
+			
 			JOptionPane.showMessageDialog(getParentFrame(),
 					"Simulation done");
+			
+		
 		}
 		else { // was cancelled -> exit immediately
 			System.exit(0);

@@ -28,6 +28,11 @@ public class DTNSim {
 	/** List of class names that should be reset between batch runs */
 	private static List<Class<?>> resetList = new ArrayList<Class<?>>();
 	public static int ReachNumber=0;
+	
+	public static  List<Message> DisasterDateList=new ArrayList<>();
+	public static  List<DTNHost> ReachDisasterList=new ArrayList<>();
+	public static int AvoidanceTimes=0;
+	public static int finalreach=0;
 	/**
 	 * Starts the user interface with given arguments.
 	 * If first argument is {@link #BATCH_MODE_FLAG}, the batch mode and text UI

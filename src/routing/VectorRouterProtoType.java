@@ -86,7 +86,8 @@ public class VectorRouterProtoType extends ActiveRouter {
 					continue; 
 				}
 				
-				System.out.println(m.getId()+"    "+m.getTtl());
+				//System.out.println(m.getId()+"    "+m.getTtl());
+				
 				//災害地からは無条件で転送			
 				if(host.name.contains("d-")) {
 					messages.add(new Tuple<Message, Connection>(m,con));
@@ -98,10 +99,16 @@ public class VectorRouterProtoType extends ActiveRouter {
 				
 				//通信相手が被災者&自分が災害地情報を転送する?
 				if(other.name.contains("p")&&other.StartPoint!=null&&m.getId().contains("disaster")) {	
-					
-					if(VectorComParator(DisasterVector(host,m),MovementVector(other)))
+				
+				  if(VectorComParator(DisasterVector(host,m),MovementVector(other)))
 						messages.add(new Tuple<Message, Connection>(m,con));
 						
+				   
+				   
+				   
+				   
+				   
+				   
 					/*if(host.getRouter().messages.get("location"+other.address)!=null) {
 						
 						//自分のメッセージリストから相手の位置情報を取り出す
@@ -141,7 +148,7 @@ public class VectorRouterProtoType extends ActiveRouter {
 	 */
 	protected boolean VectorComParator(double vecA,double vecB) {
 	
-		if((vecA+22.5)>=vecB&&(vecA-22.5)<=vecB) {
+		if((vecA+2.5)>=vecB&&(vecA-2.5)<=vecB) {
 				return true;
 		}	 
 	 return false;

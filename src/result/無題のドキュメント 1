@@ -1,5 +1,0 @@
-plot "DISTANCE" using 0:2:xtic(1)  with boxes notitle fill pattern 3,\
-"DISTANCE" using 0:($2+.1):(sprintf("%3.2f",$2)) with labels notitle font "Arial,14"
-
-plot "DISTANCE" using ($0*4+0):2  with boxes lw 2 ,\
-"DISTANCE" using ($0*4+1):3:xtic(1) with boxes lw 2 
