@@ -1,0 +1,11 @@
+reset
+set title "避難に要した総距離の比較" font "Arial,20"
+set mytics
+set grid ytics linestyle 8
+set boxwidth 0.5 relative
+set yrange [0:300]
+set xlabel "距離［m］" font "Arial,12"
+set xtics font "Arial,12"
+set ylabel "DTNの有無" font "Arial,12"
+plot "utilizationratio.txt"  using 0:2:xtic(1) with boxes lw 2 lc rgb"light-blue" notitle fill pattern 3,\
+"utilizationratio.txt" using 0:($2+.1):(sprintf("%3d",$2)) with labels notitle font "Arial,20"

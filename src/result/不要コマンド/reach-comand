@@ -1,0 +1,10 @@
+reset
+set key left top
+set xlabel "シミュレーション時間の経過[s]" font "Arial,15"
+set ylabel "避難所到着ノード数[人]" font "Arial,15"
+plot "no.txt" with linespoints pointsize 1 pointtype 7 title "通信なし",\
+"epidemic.txt" with linespoints pointsize 1 pointtype 7 title "Epidemic Routing Protocol",\
+"45.txt" with linespoints pointsize 1 pointtype 7 title "提案手法-(誤差45°)",\
+"20.txt" with linespoints pointsize 1 pointtype 7 title "提案手法-(誤差20°)",\
+"10.txt" with linespoints pointsize 1 pointtype 7 title "提案手法-(誤差10°)",\
+"5.txt" with linespoints pointsize 1 pointtype 7 title "提案手法-(誤差5°)"

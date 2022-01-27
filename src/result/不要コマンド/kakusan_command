@@ -1,0 +1,10 @@
+reset
+#set title "災害地情報の拡散数" font "Arial,20"
+set mytics
+set grid ytics linestyle 8
+set boxwidth 0.5 relative
+set yrange [0:20000]
+set xtics font "Arial,12"
+set ylabel "拡散数［個］" font "Arial,18"
+plot "kakusan_command_date" using 0:2:xtic(1) with boxes notitle fill pattern 3 lc rgb "light-blue",\
+"kakusan_command_date" using 0:($2+.1):(sprintf("%3.0f",$2)) with labels notitle font "Arial,20"

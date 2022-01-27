@@ -1,0 +1,11 @@
+reset
+set title "被災者ノードの災害地到着回数" font "Arial,20"
+set mytics
+set grid ytics linestyle 8
+set boxwidth 0.5 relative
+set yrange [0:500]
+#set xlabel "" font "Arial,18"
+set xtics font "Arial,12"
+set ylabel "到着回数［回］" font "Arial,18"
+plot "disasterreach_command_date" using 0:2:xtic(1)  with boxes notitle fill pattern 3 lc rgb "light-blue",\
+"disasterreach_command_date" using 0:($2+.1):(sprintf("%3.0f",$2)) with labels notitle font "Arial,20"
