@@ -94,13 +94,13 @@ public class VectorRouterProtoType extends ActiveRouter {
 				}
 				//被災者ノードは自分の位置情報のみを被災者ノードにのみ転送
 				if(m.getId().contains("location"+host.address)&&!other.name.contains("d-")) {
-					messages.add(new Tuple<Message, Connection>(m,con));
+					//messages.add(new Tuple<Message, Connection>(m,con));
 				}
 				
 				//通信相手が被災者&自分が災害地情報を転送する?
 				if(other.name.contains("p")&&other.StartPoint!=null&&m.getId().contains("disaster")) {	
 				
-				  if(VectorComParator(DisasterVector(host,m),MovementVector(other)))
+				 // if(VectorComParator(DisasterVector(host,m),MovementVector(other)))
 						messages.add(new Tuple<Message, Connection>(m,con));
 						
 				   

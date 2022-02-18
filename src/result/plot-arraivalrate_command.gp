@@ -9,7 +9,7 @@ set grid ytics linestyle 8
 set boxwidth 0.5 relative
 set yrange [0:100]
 set xtics font "IPAGothic,12"
-set ylabel "有効到達率［％］" font "IPAGothic,18"
+set ylabel "有効活用率［％］" font "IPAGothic,18"
 set xlabel "Length of Packet Chains"
 
 #set terminal png notransparent size 800,500 font"Helvetica, 18"

@@ -7,11 +7,9 @@ set grid
 
 set grid ytics linestyle 8
 set boxwidth 0.5 relative
-set yrange [0:400]
+set yrange [0:1000]
 set xtics font "IPAGothic,12"
-set ylabel "遭遇回数［回］" font "IPAGothic,18"
-
-#set title "" font "IPAGothic,20"
+set ylabel "活用された災害情報の数［個］" font "IPAGothic,18"
 set xlabel "Length of Packet Chains"
 
 #set terminal png notransparent size 800,500 font"Helvetica, 18"
@@ -22,7 +20,6 @@ set output "/dev/null"
 #set key bottom
 set nokey
 
-
 set style fill solid
 set linetype 1 lc rgb "skyblue"
 set linetype 2 lc rgb "sea-green"
@@ -30,12 +27,13 @@ set linetype 3 lc rgb "orange"
 set linetype 4 lc rgb "yellow"
 set linetype 5 lc rgb "pink"
 
+
 #set style data histograms
 set xtics rotate by -25 #X軸の文字の傾き
 set xtics font "IPAGothic,11"
-plot "reachtimes_command_date_2.csv" using 0:3:2:xticlabels(1) with boxes lc variable,\
- "reachtimes_command_date_2.csv" using 0:3:(sprintf("%3.0f",$3)) with labels notitle font "Arial,15"
+plot "usetimes_command_date_2.csv" using 0:3:2:xticlabels(1) with boxes lc variable,\
+ "usetimes_command_date_2.csv" using 0:($3+.1):(sprintf("%3.0f",$3)) with labels notitle font "Arial,15"
 
-set output "./output-reachtimes_command.png"
+set output "./output-usetimes_command.png"
 replot
 
